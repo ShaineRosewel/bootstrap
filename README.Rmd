@@ -1,7 +1,13 @@
-# bootstrap
+---
+title: Stat 252 - Bootstrap
+output: github_document
+---
 
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(echo = FALSE, comment = NA)
+```
 
-```{r comment=NA, echo = FALSE}
+```{r}
 fs::dir_tree(".",
              regexp = "\\.git\\b|README_files|*.html|.Rproj|renv",
              invert = TRUE,
