@@ -1,0 +1,9 @@
+# bootstrap
+
+
+```{r comment=NA, echo = FALSE}
+fs::dir_tree(".",
+             regexp = "\\.git\\b|README_files|*.html|.Rproj|renv",
+             invert = TRUE,
+             all = TRUE)
+```
