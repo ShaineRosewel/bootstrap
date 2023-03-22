@@ -1,0 +1,15 @@
+```{r echo = FALSE}
+source("/home/scientists/sci01/Projects/bootstrap/solutions/ps_01/R/item_01a.R")
+```
+
+The joint probability for the JRT-DINA model can be written through the definition of conditional probability as
+
+$$
+P(S, \mathbf{Y}, log(\mathbf{T})) = P(S)P(\mathbf{Y}, log(\mathbf{T})\vert S) 
+$$
+
+where,
+
+$$
+S = \{\boldsymbol{\alpha}_n, \theta_n,\tau_n, \lambda_k, \gamma_k, \beta_j, \delta_j, \zeta_i, \mu_{\beta}, \mu_{\delta}, \mu_{\zeta}, \boldsymbol{\Sigma}_{item}, \boldsymbol{\Sigma}_{person}, \sigma^2_{\epsilon_j}\}
+$$

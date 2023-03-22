@@ -1,15 +1,22 @@
 ---
-title: Stat 252 - Bootstrap
+title: "Stat 252: Bootstrap Methods"
 output: github_document
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(echo = FALSE, comment = NA)
+knitr::opts_chunk$set(echo = FALSE, comment = NA, encoding = "UTF-8")
 ```
+
+
+## About the course
+
+Empirical distribution functions; resampling and nonparametric statistical inference; optimality of the bootstrap; bootstrap in hypothesis testing; bootstrap in confidence intervals; bootstrap in regression models; bootstrap for dependent data. Prereq: Stat 222/232 and Stat 223/equiv. 3u.
+
+## Repository
 
 ```{r}
 fs::dir_tree(".",
-             regexp = "\\.git\\b|README_files|*.html|.Rproj|renv",
+             regexp = "\\.git\\b|README_files|*.html|.Rproj|renv|*.log",
              invert = TRUE,
              all = TRUE)
 ```

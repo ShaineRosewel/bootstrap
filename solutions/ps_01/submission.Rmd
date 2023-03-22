@@ -1,0 +1,56 @@
+---
+number_sections: true
+fig_caption: yes
+output:
+  bookdown::pdf_document2:
+    toc: false
+  citation_package: natbib
+fontsize: 12pt 
+indent: true
+header-includes:
+- \usepackage{amsmath}
+- \numberwithin{equation}{section}
+- \usepackage{setspace}\doublespacing
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \usepackage{indentfirst}
+- \usepackage{titling}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[RO,RE]{Shaine Rosewel Matala}
+- \fancyhead[LO,LE]{Problem Set 1}
+- \fancyfoot[LO,LE]{2023-03-31}
+- \fancyfoot[CO,CE]{}
+- \fancyfoot[RE,RO]{\thepage}
+- \fancypagestyle{plain}{\pagestyle{fancy}}
+geometry: margin=2cm
+papersize: a4
+bibliography: /home/scientists/sci01/Projects/bootstrap/common/ref.bib
+biblio-style: apalike
+csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review
+nocite: |
+  @foxmarianti2017
+---
+
+
+# Item 1
+
+```{r, child = "child/item_01.Rmd"}
+
+```
+
+
+# Item 2
+
+```{r, child = "child/item_02.Rmd"}
+
+```
+
+# Item 3
+
+```{r, child = "child/item_03.Rmd"}
+
+```
+
+# References
