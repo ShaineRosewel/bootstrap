@@ -10,7 +10,7 @@ indent: true
 header-includes:
 - \usepackage{amsmath}
 - \numberwithin{equation}{section}
-- \usepackage{setspace}\doublespacing
+- \usepackage{setspace}\singlespacing
 - \usepackage{pdflscape}
 - \newcommand{\blandscape}{\begin{landscape}}
 - \newcommand{\elandscape}{\end{landscape}}
@@ -32,6 +32,17 @@ csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review
 nocite: |
   @foxmarianti2017
 ---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+  echo = FALSE, 
+  comment = NA, 
+  message = FALSE, 
+  warning = FALSE,
+  fig.align = 'center',
+  fig.height = 4,
+  fig.width = 5)
+```
 
 
 # Item 1

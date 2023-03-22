@@ -1,15 +1,67 @@
-```{r echo = FALSE}
-source("/home/scientists/sci01/Projects/bootstrap/solutions/ps_01/R/item_01a.R")
+## Algorithm
+
+**Step 1**: Let $B$ be the number of bootstrap samples taken. With $n = 15$, do SRSWR from schools 1 to 15.
+
+
+\begin{equation}
+\begin{aligned}
+B^*_1 &= \left\{(X^*_{11}, Y^*_{11}), (X^*_{21}, Y^*_{21}), \ldots, (X^*_{n1}, Y^*_{n1})\right\} \\
+B^*_2 &= \left\{(X^*_{12}, Y^*_{12}), (X^*_{22}, Y^*_{22}), \ldots, (X^*_{n2}, Y^*_{n2})\right\} \\
+\vdots &= \vdots \\
+B^*_{B} &= \left\{(X^*_{1B}, Y^*_{1B}), (X^*_{2B}, Y^*_{2B}), \ldots, (X^*_{nB}, Y^*_{nB})\right\} \\
+\end{aligned}
+\end{equation}
+
+
+**Step 2**: Let $S^*_{x_b}$ and $S^*_{y_b}$ be the standard deviations of the variables, $X^*_b$ and $Y^*_b$, respectively, where $b = \left\{1, 2, \ldots, B\right\}$. Calculate the pearson product coefficient of correlation, $r^*_b$
+
+
+\begin{equation}
+\begin{aligned}
+r_b^* &= \frac{\frac{1}{n-1} \sum \left(X^*_{ib} - {\bar{X}}_b^*\right) \left(Y_{ib}^* - {\bar{Y}}^*_b\right) }{ S^*_{x_b} S^*_{y_b}}
+\end{aligned}
+\end{equation}
+
+
+to yield
+
+
+\begin{equation}
+\begin{aligned}
+r &= \left\{r^*_1, r^*_2, \ldots, r^*_B\right\} 
+\end{aligned}
+\end{equation}
+
+
+**Step 3**: Calculate $\widehat{se}(r)$ using
+
+
+\begin{equation}
+\begin{aligned}
+\widehat{se}(r) &= \sqrt{ \frac{\sum_{b=1}^B \left( r_i^* - {\bar{r}}^* \right)^2}{B-1} }
+\end{aligned}
+\end{equation}
+
+
+## Algorithm implementation
+
+```{r results = "hide"}
+source("../R/s01_i01_load_data.R")
 ```
 
-The joint probability for the JRT-DINA model can be written through the definition of conditional probability as
+```{r se}
+file <- "../R/s02_i01_bs_sampling.R"
+source(file)
+```
 
-$$
-P(S, \mathbf{Y}, log(\mathbf{T})) = P(S)P(\mathbf{Y}, log(\mathbf{T})\vert S) 
-$$
+```{r algo}
+cat(paste(readLines(file), collapse="\n"),collapse = "\n")
+```
 
-where,
+i.  bootstrap estimate of the standard error of $r$: `r se_r_boot`
+ii. 95% confidence interval for $\rho$ (the true population correlation): (`r ci_r_boot`)
+iii. a histogram showing the bootstrap distribution of the correlation $r$
 
-$$
-S = \{\boldsymbol{\alpha}_n, \theta_n,\tau_n, \lambda_k, \gamma_k, \beta_j, \delta_j, \zeta_i, \mu_{\beta}, \mu_{\delta}, \mu_{\zeta}, \boldsymbol{\Sigma}_{item}, \boldsymbol{\Sigma}_{person}, \sigma^2_{\epsilon_j}\}
-$$
+```{r}
+hist(r)
+```
