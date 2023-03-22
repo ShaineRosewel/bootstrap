@@ -1,6 +1,11 @@
-# bootstrap
+Stat 252 - Bootstrap
+================
 
-
-```{r}
-dir_tree(path = ".", recurse = TRUE, ...)
-```
+    .
+    +-- .Rprofile
+    +-- .gitignore
+    +-- README.Rmd
+    +-- problem_sets
+    |   \-- R
+    +-- references
+    \-- solutions
