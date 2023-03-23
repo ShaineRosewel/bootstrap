@@ -50,12 +50,12 @@ source("../R/s01_i01_load_data.R")
 ```
 
 ```{r se}
-file <- "../R/s02_i01_bs_sampling.R"
-source(file)
+R0201 <- "../R/s02_i01_bs_sampling.R"
+source(R0201)
 ```
 
 ```{r algo}
-cat(paste(readLines(file), collapse="\n"),collapse = "\n")
+cat(paste(readLines(R0201), collapse="\n"),collapse = "\n")
 ```
 
 i.  bootstrap estimate of the standard error of $r$: `r se_r_boot`
@@ -65,3 +65,16 @@ iii. a histogram showing the bootstrap distribution of the correlation $r$
 ```{r}
 hist(r)
 ```
+
+## Change maximum $r^*_b$
+
+```{r}
+R0301 <- "../R/s03_i01_max_value.R"
+source(R0301)
+```
+
+```{r}
+cat(paste(readLines(R0301), collapse="\n"),collapse = "\n")
+```
+
+The original maximum of $r^*_b$'s is `r r_max` while the new one is `r r_replaced_max`. Calculating the new $\widehat{se}(r)$ gives the value `r se_r_replaced_boot`. This meant an increase of `r se_percent_change`% compared to the original value.

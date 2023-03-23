@@ -1,0 +1,25 @@
+## Fill in the table
+
+```{r}
+R0102 <- "../R/s01_i02_alpha_quantile.R"
+source(R0102)
+```
+
+
+```{r}
+
+```
+```{r}
+#(quant[names(quant) == paste0(as.character(0.95*100),"%")] - quant[names(quant) == paste0(as.character((1-0.95)*100),"%")])/2*qnorm(0.95)
+
+#(quant[names(quant) == paste0(as.character(0.90*100),"%")] - quant[names(quant) == paste0(as.character((1-0.90)*100),"%")])/2*qnorm(0.90)
+
+#(quant[names(quant) == paste0(as.character(0.85*100),"%")] - quant[names(quant) == paste0(as.character((1-0.85)*100),"%")])/2*qnorm(0.85)
+
+```
+
+
+## Compute $\tilde{se}_{\alpha}(r)$
+
+
+## Change maximum $r^*_b$ and recompute
