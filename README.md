@@ -15,19 +15,22 @@ and Stat 223/equiv. 3u.
     +-- .Rprofile
     +-- .gitignore
     +-- README.Rmd
-    +-- README.md
     +-- common
     |   +-- harvard-educational-review.csl
     |   \-- ref.bib
     +-- problems
     |   \-- ps_01
     |       +-- datasets
+    |       |   \-- law_school_data.Rds
     |       \-- ps_01.pdf
     +-- references
     \-- solutions
         \-- ps_01
             +-- R
-            |   \-- item_01a.R
+            |   +-- s01_i01_load_data.R
+            |   +-- s01_i02_alpha_quantile.R
+            |   +-- s02_i01_bs_sampling.R
+            |   \-- s03_i01_max_value.R
             +-- child
             |   +-- item_01.Rmd
             |   +-- item_02.Rmd
