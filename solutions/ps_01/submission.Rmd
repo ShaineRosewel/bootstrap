@@ -28,7 +28,7 @@ geometry: margin=2cm
 papersize: a4
 bibliography: /home/scientists/sci01/Projects/bootstrap/common/ref.bib
 biblio-style: apalike
-csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review
+#csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review.csl
 nocite: |
   @foxmarianti2017
 ---

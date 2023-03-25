@@ -4,6 +4,13 @@
 R0102 <- "../R/s01_i02_alpha_quantile.R"
 source(R0102)
 ```
+```{r}
+#library(magrittr)
+#kbl(quant, caption = "Demo table", booktabs = T) %>%
+#kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
+
+```
+
 
 
 ```{r}

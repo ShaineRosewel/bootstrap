@@ -1,0 +1,130 @@
+## Algorithm: $se(\hat{\beta_2})$ estimation
+
+
+```{r}
+source("../R/s01_i03_load_data.R")
+```
+
+
+**Step 1**: Let $\epsilon_i \stackrel{\text{iid}}{\sim} \ N(0, \sigma^2), i = 1, \ldots, 24$. Under the model, $\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}$, where $\boldsymbol{\epsilon} \sim N_p(\mathbf{0}, \sigma^2 \mathbf{I}_p)$, estimate
+
+
+\begin{equation}
+\begin{aligned}
+\hat{\boldsymbol{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}
+\end{aligned}
+\end{equation}
+
+
+
+
+\begin{equation}
+\begin{aligned}
+\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^n \left(y_i-\mathbf{x}_i' \hat{\boldsymbol{\beta}} \right)^2
+\end{aligned}
+\end{equation}
+
+
+**Step 2**: 
+
+a. Repeat $B$ times: Let $e^*_i \sim N(0, \hat{\sigma}^2), i = 1, \ldots, n$. Compute $y_i^* = \mathbf{x}_i' \hat{\boldsymbol{\beta}} + e^*_i, i = 1,\ldots,n$
+b. Obtain $\hat{\beta_2}$ from the $B$ OLS estimates for each $b$ bootstrap dataset.
+
+
+\begin{equation}
+\begin{aligned}
+\hat{\boldsymbol{\beta}}^*_b = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}^*_b
+\end{aligned}
+\end{equation}
+
+
+## Algorithm implementation: $se(\hat{\beta_2})$ estimation
+
+```{r}
+X <- as.matrix(cbind(1, researcher_salary$X_i1, researcher_salary$X_i2, researcher_salary$X_i3))
+
+y <- as.matrix(researcher_salary$Y_i)
+
+beta_hat <- solve(t(X)%*%X)%*%t(X)%*%y
+beta_hat
+```
+
+```{r}
+sigma_hat_squared <- (1/n)*sum((y-X%*%beta_hat)^2)
+```
+
+```{r}
+B = 2000
+##for (b in 1:B)
+#set.seed(7)
+#y_star_list <- lapply(
+#  1:B,
+#  function(x) {
+#    sapply(1:n, function(i){
+#      t(X[i,])%*%beta_hat + rnorm(1, mean = 0, sd = #sqrt(sigma_hat_squared))
+#    })
+#    }
+#)
+
+set.seed(7) 
+y_star_list <- lapply(
+  1:B,
+  function(x) {
+    #sapply(1:n, function(i){
+      X%*%beta_hat + as.matrix(rnorm(n, mean = 0, sd = sqrt(sigma_hat_squared)))
+    #})
+    }
+)
+```
+
+```{r}
+my_mod <- lm(y~X)
+```
+
+
+```{r}
+beta_2_star <- sapply(y_star_list, function(y_star) {(solve(t(X)%*%X)%*%t(X)%*%y_star)[3]})
+
+sd(beta_2_star)
+#0.03394704
+```
+
+```{r}
+## REFERENCE: https://lukesonnet.com/teaching/inference/200d_standard_errors.pdf
+## Residuals
+resid <- y - X %*% beta_hat
+## Estimate of sigma_2
+sigma2_hat <- (t(resid) %*% resid) / (nrow(X) - ncol(X))
+sigma2_hat
+
+## Estimate of V[\hat{\bbeta}]
+vcov_beta_hat <- c(sigma2_hat) * solve(t(X) %*% X)
+vcov_beta_hat
+
+sqrt(diag(vcov_beta_hat))
+
+```
+
+
+## Algorithm: $\frac{\hat{\beta_1}}{\hat{\beta_3}}$ 95% CI estimation
+
+Repeat step 1 up to step 2.a. of the first part.
+
+b. Obtain $\frac{\hat{\beta_1}}{\hat{\beta_3}}$ from the $B$ OLS estimates for each $b$ bootstrap dataset.
+
+Step 3: Calculate the quantiles to get the 95% confidence interval.
+
+
+## Algorithm implementation: $se(\hat{\beta_2})$ estimation
+
+```{r}
+ratio <- sapply(y_star_list, function(y_star) {(solve(t(X)%*%X)%*%t(X)%*%y_star)[2]/(solve(t(X)%*%X)%*%t(X)%*%y_star)[4]})
+```
+
+```{r}
+ci_ratio_boot <- c(quantile(ratio,.025),quantile(ratio,.975))
+ci_ratio_boot
+```
+
+We are 95% confident that the true value of the ratio is between `r ci_ratio_boot[1]` and `r ci_ratio_boot[2]`
+
