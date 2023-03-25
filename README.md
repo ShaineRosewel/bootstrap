@@ -15,6 +15,7 @@ and Stat 223/equiv. 3u.
     +-- .Rprofile
     +-- .gitignore
     +-- README.Rmd
+    +-- README.md
     +-- common
     |   +-- harvard-educational-review.csl
     |   \-- ref.bib
@@ -29,11 +30,17 @@ and Stat 223/equiv. 3u.
             +-- R
             |   +-- s01_i01_load_data.R
             |   +-- s01_i02_alpha_quantile.R
+            |   +-- s01_i03_load_data.R
             |   +-- s02_i01_bs_sampling.R
-            |   \-- s03_i01_max_value.R
+            |   +-- s02_i02_se.R
+            |   +-- s02_i03_reg.R
+            |   +-- s03_i01_max_value.R
+            |   +-- s03_i02_replace.R
+            |   \-- s04_i03_ratio.R
             +-- child
             |   +-- item_01.Rmd
             |   +-- item_02.Rmd
-            |   \-- item_03.Rmd
+            |   +-- item_03.Rmd
+            |   \-- researcher_salary.RData
             +-- submission.Rmd
             \-- submission.pdf

@@ -4,29 +4,60 @@
 R0102 <- "../R/s01_i02_alpha_quantile.R"
 source(R0102)
 ```
-```{r}
-#library(magrittr)
-#kbl(quant, caption = "Demo table", booktabs = T) %>%
-#kableExtra::kable_styling(latex_options = c("striped", "hold_position"))
-
-```
-
-
 
 ```{r}
-
-```
-```{r}
-#(quant[names(quant) == paste0(as.character(0.95*100),"%")] - quant[names(quant) == paste0(as.character((1-0.95)*100),"%")])/2*qnorm(0.95)
-
-#(quant[names(quant) == paste0(as.character(0.90*100),"%")] - quant[names(quant) == paste0(as.character((1-0.90)*100),"%")])/2*qnorm(0.90)
-
-#(quant[names(quant) == paste0(as.character(0.85*100),"%")] - quant[names(quant) == paste0(as.character((1-0.85)*100),"%")])/2*qnorm(0.85)
-
+cat(paste0("FILENAME ", R0102))
+cat(paste(readLines(R0102), collapse="\n"),collapse = "\n")
 ```
 
+```{r, results = 'asis'}
+library(stargazer)
+stargazer(t(data.frame("value" = quant)), 
+          covariate.labels = c("$\\alpha$"),
+          header=FALSE, type='latex',
+          title="${\\alpha}$-Quantiles of $r^*_{\\alpha}$")
+```
 
 ## Compute $\tilde{se}_{\alpha}(r)$
 
+```{r}
+R0202 <- "../R/s02_i02_se.R"
+source(R0202)
+```
+
+```{r}
+cat(paste0("FILENAME ", R0202))
+cat(paste(readLines(R0202), collapse="\n"),collapse = "\n")
+```
+
+```{r results = 'asis'}
+#kbl(t(data.frame("value" = robust_se_r)), caption = "Estimated value", booktabs = T, escape = FALSE) %>%
+#  kable_styling(latex_options = c("hold_position"))
+stargazer(t(data.frame("value" = robust_se_r)), 
+          covariate.labels = c("$\\alpha$"),
+          header=FALSE, type='latex',
+          title="Estimated $\\tilde{se}_{\\alpha}(r)$")
+```
 
 ## Change maximum $r^*_b$ and recompute
+
+```{r}
+R0302 <- "../R/s03_i02_replace.R"
+source(R0302)
+```
+
+```{r}
+cat(paste0("FILENAME ", R0302))
+cat(paste(readLines(R0302), collapse="\n"),collapse = "\n")
+```
+
+```{r results = 'asis'}
+#kbl(t(data.frame("value" = robust_se_r)), caption = "Estimated value", booktabs = T, escape = FALSE) %>%
+#  kable_styling(latex_options = c("hold_position"))
+stargazer(t(data.frame("value" = robust_se_r_replaced)), 
+          covariate.labels = c("$\\alpha$"),
+          header=FALSE, type='latex',
+          title="Estimated $\\tilde{se}_{\\alpha}(r)$ with maximum $r^*_b$ replaced")
+```
+
+
