@@ -22,7 +22,8 @@ and Stat 223/equiv. 3u.
     +-- problems
     |   \-- ps_01
     |       +-- datasets
-    |       |   \-- law_school_data.Rds
+    |       |   +-- law_school_data.Rds
+    |       |   \-- researcher_salary.RData
     |       \-- ps_01.pdf
     +-- references
     \-- solutions
@@ -40,7 +41,6 @@ and Stat 223/equiv. 3u.
             +-- child
             |   +-- item_01.Rmd
             |   +-- item_02.Rmd
-            |   +-- item_03.Rmd
-            |   \-- researcher_salary.RData
+            |   \-- item_03.Rmd
             +-- submission.Rmd
             \-- submission.pdf

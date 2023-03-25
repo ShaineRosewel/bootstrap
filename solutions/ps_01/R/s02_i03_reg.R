@@ -1,5 +1,3 @@
-    source("../R/s01_i03_load_data.R")
-    
     X <- as.matrix(cbind(1, 
                          researcher_salary$X_i1, 
                          researcher_salary$X_i2, 
@@ -15,8 +13,7 @@
     # Step 1: Calculate beta_hat and sigma2_squared_mle
     beta_hat <- solve(t(X)%*%X)%*%t(X)%*%y
     resid <- y - X %*% beta_hat
-    sigma2_squared_lse <- (t(resid) %*% resid) / (nrow(X) - ncol(X))
-    #sigma2_squared_mle <- (1/n)*sum(resid^2)
+    sigma2_squared_lse <- (t(resid) %*% resid) / (n - ncol(X))
     
     # Step 2.a: Generate bootstrap samples
     set.seed(7) 

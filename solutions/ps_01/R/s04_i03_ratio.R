@@ -8,4 +8,3 @@
     )
     
     ci_ratio_boot <- c(quantile(ratio,.025),quantile(ratio,.975))
-    print(ci_ratio_boot)

@@ -1,5 +1,5 @@
-# Dataset for item 1 & 2
 # wd: /home/scientists/sci01/Projects/bootstrap/solutions/ps_01/child
+
 data <- "../../../problems/ps_01/datasets/researcher_salary.RData"
 if (file.exists(data)) {
   print(paste(c("The file exists; loading", data), collapse = ' '))
@@ -20,7 +20,7 @@ if (file.exists(data)) {
   )
   
   n <- dim(researcher_salary)[1]
-  save(researcher_salary, n, file = "researcher_salary.RData")
+  save(researcher_salary, n, file = data)
 }
 rm(data)
 

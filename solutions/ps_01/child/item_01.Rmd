@@ -2,7 +2,6 @@
 
 **Step 1**: Let $B$ be the number of bootstrap samples taken. With $n = 15$, do SRSWR from schools 1 to 15.
 
-
 \begin{equation}
 \begin{aligned}
 B^*_1 &= \left\{(X^*_{11}, Y^*_{11}), (X^*_{21}, Y^*_{21}), \ldots, (X^*_{n1}, Y^*_{n1})\right\} \\
@@ -12,9 +11,7 @@ B^*_{B} &= \left\{(X^*_{1B}, Y^*_{1B}), (X^*_{2B}, Y^*_{2B}), \ldots, (X^*_{nB},
 \end{aligned}
 \end{equation}
 
-
 **Step 2**: Let $S^*_{x_b}$ and $S^*_{y_b}$ be the standard deviations of the variables, $X^*_b$ and $Y^*_b$, respectively, where $b = \left\{1, 2, \ldots, B\right\}$. Calculate the pearson product coefficient of correlation, $r^*_b$
-
 
 \begin{equation}
 \begin{aligned}
@@ -22,9 +19,7 @@ r_b^* &= \frac{\frac{1}{n-1} \sum \left(X^*_{ib} - {\bar{X}}_b^*\right) \left(Y_
 \end{aligned}
 \end{equation}
 
-
 to yield
-
 
 \begin{equation}
 \begin{aligned}
@@ -32,16 +27,13 @@ r &= \left\{r^*_1, r^*_2, \ldots, r^*_B\right\}
 \end{aligned}
 \end{equation}
 
-
 **Step 3**: Calculate $\widehat{se}(r)$ using
-
 
 \begin{equation}
 \begin{aligned}
-\widehat{se}(r) &= \sqrt{ \frac{\sum_{b=1}^B \left( r_i^* - {\bar{r}}^* \right)^2}{B-1} }
+\widehat{se}(r) &= \sqrt{ \frac{\sum_{b=1}^B \left( r_b^* - {\bar{r}}^* \right)^2}{B-1} }
 \end{aligned}
 \end{equation}
-
 
 ## Algorithm implementation
 
@@ -55,12 +47,13 @@ source(R0201)
 ```
 
 ```{r algo}
+cat(paste0("    CODE FILENAME: ", R0201))
 cat(paste(readLines(R0201), collapse="\n"),collapse = "\n")
 ```
 
-i.  bootstrap estimate of the standard error of $r$: `r se_r_boot`
-ii. 95% confidence interval for $\rho$ (the true population correlation): (`r ci_r_boot`)
-iii. a histogram showing the bootstrap distribution of the correlation $r$
+  i.  bootstrap estimate of the standard error of $r$: `r se_r_boot`
+  ii. 95% confidence interval for $\rho$ (the true population correlation): (`r ci_r_boot`)
+  iii. a histogram showing the bootstrap distribution of the correlation $r$
 
 ```{r}
 hist(r)
@@ -74,6 +67,7 @@ source(R0301)
 ```
 
 ```{r}
+cat(paste0("    CODE FILENAME: ", R0301))
 cat(paste(readLines(R0301), collapse="\n"),collapse = "\n")
 ```
 
