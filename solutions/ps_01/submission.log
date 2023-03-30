@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2023.3.27)  30 MAR 2023 20:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2023.3.27)  30 MAR 2023 21:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -620,8 +620,8 @@ LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line
 File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 Overfull \hbox (10.30338pt too wide) in paragraph at lines 407--407
-[]    \T1/lmtt/m/n/12 # USUAL ESTIMATE (see appendix for code reference) ======
-===================[] 
+[]    \T1/lmtt/m/n/12 # USUAL ESTIMATE (see references section for code source)
+ ==================[] 
  []
 
 [5] [6]
@@ -659,7 +659,7 @@ lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/
 fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/t
 ype1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on submission.pdf (7 pages, 234773 bytes).
+Output written on submission.pdf (7 pages, 234777 bytes).
 PDF statistics:
  244 PDF objects out of 1000 (max. 8388607)
  214 compressed objects within 3 object streams

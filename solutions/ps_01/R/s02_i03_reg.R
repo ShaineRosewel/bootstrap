@@ -34,7 +34,7 @@
     # Step 3: Get the sd of Calculate beta_2_star's
     sd_boot <- sd(beta_2_star)
     
-    # USUAL ESTIMATE (see appendix for code reference) =========================
+    # USUAL ESTIMATE (see references section for code source) ==================
     # 0.03710865
     
     vcov_beta_hat <- c(sigma2_squared_lse) * solve(t(X) %*% X)
