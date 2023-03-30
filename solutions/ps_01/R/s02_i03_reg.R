@@ -7,8 +7,6 @@
     
     # BOOTSTRAP ESTIMATE =======================================================
     # 0.03718712
-    
-    B = 2000
 
     # Step 1: Calculate beta_hat and sigma2_squared_mle
     beta_hat <- solve(t(X)%*%X)%*%t(X)%*%y

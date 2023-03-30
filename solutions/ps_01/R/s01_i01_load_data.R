@@ -5,7 +5,6 @@
     if (file.exists(data)) {
       print(paste(c("The file exists; loading", data), collapse = ' '))
       load(data)
-      seed <- 7
     } else {
       paste(c("The file does not exist; creating, loading and saving", data), 
             collapse = ' ')
@@ -16,9 +15,11 @@
         'GPA' = c(3.39,3.30,2.81,3.03,3.44,3.07,3.00,3.43,
                   3.36,3.13,3.12,2.74,2.76,2.88,2.96)
       )
+      n1 <- dim(law_school_data)[1]
       seed <- 7
+      B <- 2000
       
-      save(law_school_data, seed, file=data)
+      save(law_school_data, seed, B, n1, file=data)
     }
     
     rm(data)

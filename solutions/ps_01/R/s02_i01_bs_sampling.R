@@ -6,9 +6,9 @@
       sapply(
         # Step 1: 2000 bootstrap samples (with replacement) of size 15
         lapply(
-          1:2000, 
+          1:B, 
           function(argu){ law_school_data[sample(law_school_data$School, 
-                                              15,  
+                                              n1,  
                                               replace = TRUE), 
                                        c(2,3)] }
         ),

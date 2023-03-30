@@ -42,7 +42,7 @@ knitr::opts_chunk$set(
   fig.align = 'center',
   fig.height = 4,
   fig.width = 5)
-options(scipen = 1, digits = 4)
+options(scipen = 1, digits = 5)
 ```
 
 # Item 1 Solutions

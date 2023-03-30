@@ -5,7 +5,6 @@
     if (file.exists(data)) {
       print(paste(c("The file exists; loading", data), collapse = ' '))
       load(data)
-      seed <- 7
     } else {
       paste(c("The file does not exist; creating, loading and saving", data), 
             collapse = ' ')
@@ -22,8 +21,9 @@
       )
       n <- dim(researcher_salary)[1]
       seed <- 7
+      B <- 2000
       
-      save(researcher_salary, n, file = data)
+      save(researcher_salary, n, B, file = data)
     }
     
     rm(data)

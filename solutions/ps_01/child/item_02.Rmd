@@ -34,7 +34,8 @@ cat(paste(readLines(R0202), collapse="\n"),collapse = "\n")
 stargazer(t(data.frame("value" = robust_se_r)), 
           covariate.labels = c("$\\alpha \\ (\\%)$"),
           header=FALSE, type='latex',
-          title="Estimated $\\widetilde{se}_{\\alpha}(r)$")
+          title="Estimated $\\widetilde{se}_{\\alpha}(r)$",
+          label = "tab:original")
 ```
 
 ## Change maximum $r^*_b$ and recompute $\widetilde{se}_{\alpha}(r)$
@@ -53,7 +54,9 @@ cat(paste(readLines(R0302), collapse="\n"),collapse = "\n")
 stargazer(t(data.frame("value" = robust_se_r_replaced)), 
           covariate.labels = c("$\\alpha \\ (\\%)$"),
           header=FALSE, type='latex',
-          title="Estimated $\\widetilde{se}_{\\alpha}(r)$ with maximum $r^*_b$ replaced")
+          title="Estimated $\\widetilde{se}_{\\alpha}(r)$ with maximum $r^*_b$ replaced",
+          label = "tab:maxed")
 ```
 
+The equal results shown in Table \@ref(tab:original) and Table \@ref(tab:maxed) demonstrates that indeed the estimator is robust.
 
