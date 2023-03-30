@@ -18,9 +18,9 @@ header-includes:
 - \usepackage{titling}
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
-- \fancyhead[RO,RE]{Shaine Rosewel Matala}
-- \fancyhead[LO,LE]{Problem Set 1}
-- \fancyfoot[LO,LE]{2023-03-31}
+- \fancyhead[RO,RE]{Matala, Lagazon}
+- \fancyhead[LO,LE]{Homework 1}
+- \fancyfoot[LO,LE]{`r format(Sys.time(), 'Last rendered on %Y %B %d %X')`}
 - \fancyfoot[CO,CE]{}
 - \fancyfoot[RE,RO]{\thepage}
 - \fancypagestyle{plain}{\pagestyle{fancy}}
@@ -28,9 +28,9 @@ geometry: margin=2cm
 papersize: a4
 bibliography: /home/scientists/sci01/Projects/bootstrap/common/ref.bib
 biblio-style: apalike
-#csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review.csl
+csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review.csl
 nocite: |
-  @foxmarianti2017
+  @sonnet
 ---
 
 ```{r setup, include=FALSE} 
@@ -45,23 +45,30 @@ knitr::opts_chunk$set(
 options(scipen = 1, digits = 4)
 ```
 
-
-# Item 1
+# Item 1 Solutions
 
 ```{r, child = "child/item_01.Rmd"}
 
 ```
 
-# Item 2
+# Item 2 Solutions
 
 ```{r, child = "child/item_02.Rmd"}
 
 ```
 
-# Item 3
+# Item 3 Solutions
 
 ```{r, child = "child/item_03.Rmd"}
 
 ```
 
 # References
+
+<div id="refs"></div>
+
+# Appendix
+
+```{r, child = "child/appendix.Rmd"}
+
+```
