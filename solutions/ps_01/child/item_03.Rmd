@@ -45,7 +45,7 @@ cat(paste(readLines(R0203), collapse="\n"),collapse = "\n")
 
 ## Algorithm: $\frac{\hat{\beta_1}}{\hat{\beta_3}}$ 95% CI estimation
 
-Repeat step 1 up to step 2.a. of the [Item 1 Solutions].
+Repeat step 1 up to step 2.a. of the [Algorithm: $se(\hat{\beta_2})$ estimation] section.
   
 Replace 2.b. with this: Obtain $\frac{\hat{\beta_1}}{\hat{\beta_3}}$ from the $B$ OLS estimates for each $b$ bootstrap dataset.
 
