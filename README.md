@@ -14,20 +14,14 @@ and Stat 223/equiv. 3u.
     .
     ├── .Rprofile
     ├── .gitignore
-    ├── 00_lecture_notes_files
-    │   ├── 00_lecture_notes.Rmd
-    │   ├── 00_lecture_notes.md
-    │   └── figure-gfm
-    │       ├── bootstap_calculation-1.png
-    │       ├── bootstap_calculation-2.png
-    │       ├── unnamed-chunk-1-1.png
-    │       └── unnamed-chunk-1-2.png
     ├── README.Rmd
     ├── README.md
     ├── common
     │   ├── harvard-educational-review.csl
     │   └── ref.bib
     ├── lectures
+    │   ├── 00_lecture_notes.Rmd
+    │   ├── 00_lecture_notes.md
     │   ├── 00_syllabus_252.pdf
     │   ├── 01_regression.pdf
     │   ├── 02_bias.pdf
