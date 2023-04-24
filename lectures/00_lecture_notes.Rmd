@@ -1,7 +1,6 @@
 ---
-title: "Preliminaries"
-date: "2023-04-24"
-output: html_document
+title: "Basic Ideas"
+output: github_document
 ---
 
 ```{r setup, include=FALSE}

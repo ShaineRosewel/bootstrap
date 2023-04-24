@@ -14,15 +14,28 @@ and Stat 223/equiv. 3u.
     .
     ├── .Rprofile
     ├── .gitignore
+    ├── 00_lecture_notes_files
+    │   ├── 00_lecture_notes.Rmd
+    │   ├── 00_lecture_notes.md
+    │   └── figure-gfm
+    │       ├── bootstap_calculation-1.png
+    │       ├── bootstap_calculation-2.png
+    │       ├── unnamed-chunk-1-1.png
+    │       └── unnamed-chunk-1-2.png
     ├── README.Rmd
     ├── README.md
     ├── common
     │   ├── harvard-educational-review.csl
     │   └── ref.bib
+    ├── lectures
+    │   ├── 00_syllabus_252.pdf
+    │   ├── 01_regression.pdf
+    │   ├── 02_bias.pdf
+    │   └── 03_bootstrap_t.pdf
     ├── problems
     │   └── ps_01
     │       ├── datasets
-    │       │   ├── law_school_data.Rds
+    │       │   ├── law_school_data.RData
     │       │   └── researcher_salary.RData
     │       └── ps_01.pdf
     └── solutions
@@ -38,6 +51,7 @@ and Stat 223/equiv. 3u.
             │   ├── s03_i02_replace.R
             │   └── s04_i03_ratio.R
             ├── child
+            │   ├── appendix.Rmd
             │   ├── item_01.Rmd
             │   ├── item_02.Rmd
             │   └── item_03.Rmd
