@@ -9,7 +9,7 @@
           quantile_vector[
             names(quantile_vector) == paste0(as.character((1-alpha)*100),"%")
             ]
-        )/2*qnorm(alpha)
+        )/(2*qnorm(alpha))
       )
     } 
     

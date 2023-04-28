@@ -1,0 +1,43 @@
+---
+title: "Regression"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Case 1
+
+Sample with replacement $\left\{ e_1^*, \dots , e_n^*\right\}$ from $\left\{ e_1, \dots , e_n\right\}$ or sample from  $\left\{ \frac{1}{\sqrt{1-h_{11}}}e_1^*, \dots , \frac{1}{\sqrt{1-h_{nn}}} e_n^*\right\}$ (better since this keeps the variance constant)
+
+## Case 2
+
+Sample $e_i^
+
+
+## Case 3
+
+
+## Case 4
+
+## Examples {.tabset}
+
+### Case 1
+
+### Case 2
+
+### Case 3
+
+### Case 4
+
+## Bootstrap estimation of the Bias
+
+So far, we  have concentrated on the standard error of an estimator, but note that
+
+$$
+MSE_{\theta}(\hat{\theta}) = E
+
+$$
+bias_\theta (\hat \theta) = E (\hat \theta) - \theta
+$$

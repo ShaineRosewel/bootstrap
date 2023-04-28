@@ -319,7 +319,7 @@ unknown meant we can estimate (Least squares, MLE) $\theta$.
 ${\hat{\theta}}$ (could be a vector) should be a sufficient statistic
 (jointly sufficient, if vector).
 
-ex: Let $F(\cdot)$ be the CDF $\mathcal{N}(\mu, \sigma^2)$ but
+**example:** Let $F(\cdot)$ be the CDF $\mathcal{N}(\mu, \sigma^2)$ but
 $\mu, \sigma^2$ are unknown.
 
 **How to estimate $se(\hat{\theta})$**
@@ -354,7 +354,7 @@ $$
 P\widehat{(\hat{\theta} \leq x)} = \frac{\# \{\hat{\theta}_i^* \leq x\}}{B} = \frac{\sum^B_{i=1} I\left( \hat{\theta}_i^* \leq x \right)}{B} \quad \text{just proportion}
 $$
 
-**example (Casella & Berger):** Let $X_1 \dots X_n$ (distribution is
+**Example (Casella & Berger):** Let $X_1 \dots X_n$ (distribution is
 known)
 
 ``` r
@@ -429,7 +429,91 @@ $$
 v(s^2) = \frac{2\sigma^4}{n-1} = \frac{2(4^4)}{9-1} = 4 \quad \text{true value closer to bs estimate than MLE}
 $$
 
-**example (Efron & Tibshirani):**
+**Example (Efron & Tibshirani):** (parametric; distribution is known but
+parameters are not)
 
-Recall
-$(X, Y)' \sim \text{bivar}\mathcal{N} \left(\mu_x, \mu_y, \sigma^2_x, \sigma^2_y\right)$
+Data: $\{ (X_1, Y_1), \dots, (X_n, Y_n)\}$ Recall
+$(X, Y)' \sim \text{bivar}\mathcal{N} \left(\mu_x, \mu_y, \sigma^2_x, \sigma^2_y, \rho\right)$,
+the joint density (pdf) is
+
+\$\$ f\_{(X,Y)}(x,y) = { - }
+
+\$\$
+
+Its CDF has no closed form but we know its integral form.
+
+$\hat{\rho}$ (coefficient of correlation; measures strength of linear
+relationship bet x and y) is usually estimated using the pearson product
+moment coefficient of correlation $r$.
+
+$$
+\hat{\rho} = r = \frac{\sum(X_i - \bar{X})(Y_i-\bar{Y})}{\sqrt{\sum(X_i - \bar{X})^2\sum(Y_i - \bar{Y})^2}}
+$$ There is no direct way to calculate the precision for
+$se(\hat{\rho}) = se(r)$ but we can compute this using bootstrap.
+
+Algorithm (parametric bs to estimate $se(\hat{\rho})$):
+
+1.  Compute
+    $\hat \mu_X = \bar X, \ \hat \mu_Y = \bar Y, \, \ \hat \sigma^2_X = S^2_X, \ \hat \sigma^2_Y = S^2_Y, \ \hat \rho = r$.
+    Note that $\left(\bar Y, \bar X, S^2_X, S^2_Y, r\right)$ is jointly
+    sufficient for the set of parameters.
+
+2.  Generate sample pairs (bivariate samples) from the plug-in
+    distribution,  
+    $(X^*_{11}, Y^*_{11}), (X^*_{21}, Y^*_{21}), \dots, (X^*_{n1}, Y^*_{n1}) \sim BVN\left(\hat \mu_x, \hat \mu_y, \hat \sigma^2_x, \hat \sigma^2_y, \hat \rho\right) \rightarrow r^*_1$  
+    $(X^*_{12}, Y^*_{12}), (X^*_{22}, Y^*_{22}), \dots, (X^*_{n2}, Y^*_{n2}) \sim BVN\left(\hat \mu_x, \hat \mu_y, \hat \sigma^2_x, \hat \sigma^2_y, \hat \rho\right) \rightarrow r^*_2$
+    $\vdots$
+    $(X^*_{1B}, Y^*_{1B}), (X^*_{2B}, Y^*_{2B}), \dots, (X^*_{nB}, Y^*_{nB}) \sim BVN\left(\hat \mu_x, \hat \mu_y, \hat \sigma^2_x, \hat \sigma^2_y, \hat \rho\right) \rightarrow r^*_B$
+
+    BS estimate of the SE:
+
+    $$
+    se(r) = \sqrt \frac{\sum(r_i^*-\bar{r}^*)^2}{B-1};\ \ \bar{r} = \frac{1}{B}\sum^B_{i=1} r^*_i
+    $$
+
+    CI for $/rho$: $\left( r^*_{0.025}, r^*_{0.975}\right)$ Crude way of
+    getting $95\%$ CI
+
+Aside: textbook formula for estimating SE of $r$ (only an
+approximation).
+
+$$
+\widehat {se}(r) = \frac{1-r^2}{\sqrt{n-3}}
+$$ Its basis: The denominator of the result below resembles a se. $n-3$
+is a finite sample correction (better way to estimate for small sample
+size)
+
+$$
+\frac{r-\rho}{\frac{1-\rho}{\sqrt{n}}} \overset{d} \longrightarrow \mathcal N(0,1)
+$$
+
+Aim: compare approximation formula with the bootstrap estimate.
+
+``` r
+#setwd("C:/Users/mcluc/Desktop/PENDING/STAT 252/4_DATASETS")
+admission <- read.csv('admission.csv',header=T)
+Entrance <- admission[,1]; GPA <- admission[,2]
+plot(GPA~Entrance,data=admission,pch=16)
+
+# sample size: 20
+mean(Entrance); mean(GPA) #5, 2.5
+var(Entrance); var(GPA) # 0.48, 0.5179
+cov(Entrance,GPA) # 0.4032
+length(Entrance)
+
+set.seed(100)
+library(mvtnorm) #allows me to sample from multivariate normal
+B=500 #number of bootstrap samples
+r.star <- c()
+for(b in 1:B){
+  x <- rmvnorm(20,c(5,2.5),matrix(c(0.48,0.4032,0.4032,0.5179),nrow=2)) #sample from plug-in
+  r.star[b] <- cor(x[,1],x[,2]) #bootstrap statistics
+}
+se.r.boot <- sd(r.star) #.0289
+print(se.r.boot) #Bootstrap estimate of the std. err. of r
+print(c(quantile(r.star,.025),quantile(r.star,.975))) #Boot. percentile 95% CI for \rho (.626, .92)
+
+
+se.r.textbook <- (1-0.8086^2)/sqrt(20-3) 
+print(se.r.textbook) #0.08396
+```
