@@ -12,6 +12,7 @@ and Stat 223/equiv. 3u.
 ## Repository
 
     .
+    ├── .Rhistory
     ├── .Rprofile
     ├── .gitignore
     ├── README.Rmd
@@ -23,9 +24,18 @@ and Stat 223/equiv. 3u.
     │   ├── 00_lecture_notes.Rmd
     │   ├── 00_lecture_notes.md
     │   ├── 00_syllabus_252.pdf
-    │   ├── 01_regression.pdf
-    │   ├── 02_bias.pdf
-    │   └── 03_bootstrap_t.pdf
+    │   ├── 01_lecture_notes.Rmd
+    │   ├── 02_lecture_notes.Rmd
+    │   ├── 02_regression.pdf
+    │   ├── 03_bias.pdf
+    │   ├── 04_bootstrap_t.pdf
+    │   ├── datasets
+    │   │   ├── admission.csv
+    │   │   ├── copper.csv
+    │   │   ├── gfr.csv
+    │   │   ├── patch.csv
+    │   │   └── tablets.csv
+    │   └── image.jpg
     ├── problems
     │   └── ps_01
     │       ├── datasets
