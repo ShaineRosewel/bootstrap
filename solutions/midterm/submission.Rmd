@@ -30,7 +30,7 @@ bibliography: /home/scientists/sci01/Projects/bootstrap/common/ref.bib
 biblio-style: apalike
 csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review.csl
 nocite: |
-  @sonnet
+  @penn
 ---
 
 ```{r setup, include=FALSE} 
@@ -47,8 +47,8 @@ options(scipen = 1, digits = 5)
 
 # Microbiology
 
-A laboratory wants **to determine if two different methods(A and B) give similar results** for quantifying a particular bacterial species in a particular medium. Under each method, the counts form a random sample. **Assume that the counts follow a Poisson distribution**, since this distribution is a typical model for such data. Let
-$\mu_A$ and $\mu_B$ represent the population mean counts for Methods A and B, respectively. Let $\theta = \mu_A \mu_B$.
+A laboratory wants **to determine if two different methods (A and B) give similar results** for quantifying a particular bacterial species in a particular medium. Under each method, the counts form a random sample. **Assume that the counts follow a Poisson distribution**, since this distribution is a typical model for such data. Let
+$\mu_A$ and $\mu_B$ represent the population mean counts for Methods A and B, respectively. Let $\theta = \mu_A -\mu_B$.
 
 
 ```{r, child = "child/item_01.Rmd"}

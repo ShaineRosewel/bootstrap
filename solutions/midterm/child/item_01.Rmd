@@ -16,7 +16,7 @@ Use the bootstrap to estimate the standard error of $\hat\theta = \mu_A - \mu_B$
   \end{aligned}
   \end{equation}
 
-  * According to this reference. A sufficient statistic for the parameter of the Poisson distribution, $\lambda$ is $\sum_{i = 1}^n x_i$. Since it is sufficient to know the average if we know the sum (given the sample), then we can also take the mean as another sufficient statistic.
+  * Following the @penn (see [References]), a sufficient statistic for the parameter of the Poisson distribution, $\lambda$ is $\sum_{i = 1}^n x_i$. Since it is sufficient to know the average if we know the sum (given the sample), then we can also take the mean as another sufficient statistic.
 
 
 __Algorithm:__
