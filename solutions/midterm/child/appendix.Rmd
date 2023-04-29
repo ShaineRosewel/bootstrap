@@ -1,0 +1,11 @@
+## Code to read data for items 1 & 2
+
+```{r results = "hide"}
+R0101 <- "../R/01_00_load_data.R"
+source(R0101)
+```
+
+```{r}
+cat(paste0("    CODE FILENAME: ", R0101))
+cat(paste(readLines(R0101), collapse="\n"),collapse = "\n")
+```

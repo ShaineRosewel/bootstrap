@@ -31,13 +31,122 @@ Sample $e_i^
 
 ### Case 4
 
-## Bootstrap estimation of the Bias
+## Bootstrap estimation of the Bias {.tabset}
 
 So far, we  have concentrated on the standard error of an estimator, but note that
 
 $$
-MSE_{\theta}(\hat{\theta}) = E
+\begin{equation}
+\begin{aligned}
+MSE_{\theta}(\hat{\theta}) &= E(\hat \theta - \theta)^2 \quad \text{measure of accuracy}\\
+&= Var(\hat \theta) + \left[ bias_\theta(\hat \theta) \right]^2
+\end{aligned}
+\end{equation}
+$$
+
+$\hat \theta$ is an unbiased estimate of $\theta \iff E(\hat \theta) = \theta \quad \forall\theta$ in the parameter space. Equivalently $bias_\theta(\hat \theta) = 0 \quad \forall \theta$
+
+
+Plug-in estimated are not necessarily unbiased but tend to have small biases.
+
+Aside: A functional is a function whose argument is a function. Parameters are functionals because they depend on pdf/ distributions. An example is the population mean, $\mu$
 
 $$
-bias_\theta (\hat \theta) = E (\hat \theta) - \theta
+E(x) = \mu = \mu(f) = \int^{+\infty}_{-\infty} xf(x) dx, \quad \text{if x has pdf f }
 $$
+
+$$
+\mu(g) = \int^{+\infty}_{-\infty} xg(x) dx, \quad \text{if x has pdf g }
+$$
+
+$$
+V(x) = \int(x-\mu)^2f(x)dx = \sigma^2(f)
+$$
+
+
+$$
+\begin{equation}
+\begin{aligned}
+\mu(\mathcal F) &= \text{function of the bias} \\
+&= \int^{+\infty}_{-\infty} xd \mathcal F(x) \quad \text{we instead measure } \mathcal F(x) \text{ using Stieltjes integral} \\
+\mu(\hat {\mathcal F}) 
+&= \int^{+\infty}_{-\infty} xd\hat{\mathcal {F}}(x) \quad \text{sample plugin estimator} \\
+&= \bar x
+\end{aligned}
+\end{equation}
+$$
+
+
+Plugin estimators are not necessarily  unbiased but tend to have small biases.
+
+
+### Usual BS est'or of the bias
+
+$$
+\begin{equation}
+\begin{aligned}
+\overline{\hat \theta^*} - \hat \theta \quad \text{where} \quad \overline{\hat \theta^*} = \frac{1}{B} \sum^B_{b=1} \hat \theta_b^*; \ \hat \theta^*_b = \text{est'or computed from the BS sample}
+\end{aligned}
+\end{equation}
+$$
+
+**Example**: see handouts in bias (patch sample).
+
+* no assumed distribution $\rightarrow$ sample pairs without replacement.
+
+
+
+```{r}
+set.seed(100)
+patch <- read.csv(file='datasets/patch.csv')
+theta.hat <- mean(patch$y)/mean(patch$z)
+theta.hat.med <- median(patch$y)/median(patch$z)
+patch.zy <- patch[,c(5,6)]
+n <- nrow(patch.zy)
+B <- 500
+
+boot.bias <- function(){
+  patch.zy.boot <- patch.zy[sample(1:n,n,replace=T),] #srswr of the rows!
+  theta.hat.boot <- mean(patch.zy.boot[,2])/mean(patch.zy.boot[,1])
+  return(theta.hat.boot)
+}
+
+v <- replicate(B,boot.bias())
+theta.hat.boot.mean <- mean(v) #theta-hat-bar star
+bias.hat.boot <- theta.hat.boot.mean - theta.hat #bootstrap estimate of bias
+print(bias.hat.boot)
+hist(v,main='Bootstrap distribution of theta-hat ')
+
+sd(v) #bootstrap est of SE of theta-hat [differs from 0.105]
+
+bias.hat.boot/sd(v) # <= 0.25
+```
+
+### Improved BS est'or of the bias
+
+```{r}
+proportions <- function(cc){
+  dd <- c()
+  for(i in 1:length(cc)){
+    dd[i] <- sum(cc==i)/length(cc)
+  }
+  return(dd)
+}
+
+boot.bias.improved <- function(){
+  k <- sample(1:n,n,replace=T)
+  p.star <- proportions(k)
+  patch.zy.boot <- patch.zy[k,]
+  theta.hat.boot <- mean(patch.zy.boot[,2])/mean(patch.zy.boot[,1])
+  return(c(theta.hat.boot,p.star))
+}
+
+set.seed(100)
+res <- rowMeans(replicate(B,boot.bias.improved()))
+p.star.bar <- res[2:9]
+theta.hat.boot.mean <- res[1]
+bias.tilde.boot <- theta.hat.boot.mean - t(p.star.bar)%*%patch.zy[,2] / t(p.star.bar)%*%patch.zy[,1]
+print(bias.tilde.boot)
+```
+
+
