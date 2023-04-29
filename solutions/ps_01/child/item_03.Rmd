@@ -15,7 +15,8 @@ source(R0103)
 
 \begin{equation}
 \begin{aligned}
-\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^n \left(y_i-\mathbf{x}_i' \hat{\boldsymbol{\beta}} \right)^2
+\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^n \left(y_i-\mathbf{x}_i' \hat{\boldsymbol{\beta}} \right)^2, \quad \text{least squares OR} \\
+\hat{\sigma}^2 = \frac{1}{n-p} \sum_{i=1}^n \left(y_i-\mathbf{x}_i' \hat{\boldsymbol{\beta}} \right)^2, \quad \text{maximum likelihood} \\
 \end{aligned}
 \end{equation}
 
