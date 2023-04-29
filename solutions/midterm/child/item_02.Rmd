@@ -103,7 +103,7 @@ hist(
 
 ## Confidence Intervals
 
-We are $95\%$ confident that the true value of $\theta$ is between `r stable_ci[1]` and `r stable_ci[2]`. Since the values being dealt with are large, in my perspective, interval is neither too broad nor too narrow.
+We are $95\%$ confident that the true value of $S_0$ is between `r stable_ci[1]` and `r stable_ci[2]`. Since the values being dealt with are large, in my perspective, interval is neither too broad nor too narrow.
 
 
 
