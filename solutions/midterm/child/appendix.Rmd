@@ -1,4 +1,4 @@
-## Code to read data for items 1 & 2
+## Code to read data for item 1
 
 ```{r results = "hide"}
 R0101 <- "../R/01_00_load_data.R"

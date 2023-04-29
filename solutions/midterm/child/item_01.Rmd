@@ -16,8 +16,7 @@ Use the bootstrap to estimate the standard error of $\hat\theta = \mu_A - \mu_B$
   \end{aligned}
   \end{equation}
 
-  * Following the @penn (see [References]), a sufficient statistic for the parameter of the Poisson distribution, $\lambda$ is $\sum_{i = 1}^n x_i$. Since it is sufficient to know the average if we know the sum (given the sample), then we can also take the mean as another sufficient statistic.
-
+  * Following a fact mentioned on page 237 from @efron, a sufficient statistic for the parameter of the Poisson distribution $\lambda$ is the average of the observations $\sum \frac{x}{n}$.
 
 __Algorithm:__
 
@@ -70,16 +69,16 @@ R01_01 <- "../R/01_01_se_estimate.R"
 source(R01_01)
 ```
 
-The bootstrap estimate of the standard error is `r suff1_se`.
+The bootstrap estimate of the standard error is `r suff_se`.
 
 
 ## Histogram
 
-The histogram has a symmetric bell curve shape. I recalled in class that this is expected to be centered on the statistic. In this case the statistic is `r mean(microbiology$X)-mean(microbiology$Y)` while the mean of $\hat \theta^*$'s is `r mean(suff1_theta_star)` This is the reason why I chose the mean for the plug-in distribution. If the plug-in distribution is based on the sum, the histogram will be centered on a different, larger value, far from the statistic. It will also have a higher estimate of the standard error (`r suff2_se`).
+The histogram has a symmetric bell curve shape. This is expected to be centered on the statistic. In this case the statistic is `r mean(microbiology$X)-mean(microbiology$Y)` while the mean of $\hat \theta^*$'s is `r mean(suff_theta_star)`.
 
 ```{r echo = FALSE}
 hist(
-  suff1_theta_star,
+  suff_theta_star,
   main = expression(paste("Histogram of ", hat(theta), "*")),
   xlab = expression(paste(hat(theta), "*")),
   )
@@ -88,9 +87,9 @@ hist(
 ## Confidence Intervals
 
 ```{r}
-ci <- c(quantile(suff1_theta_star,.025),quantile(suff1_theta_star,.975))
+ci <- c(quantile(suff_theta_star,.025),quantile(suff_theta_star,.975))
 ```
 
-We are $95\%$ confident that the true value of $\theta$ is between `r ci[1]` and `r ci[2]`. If instead we use sum for the sufficient statistic, then the CI will be a lot wider, with the sample statistic, not even making it within the interval `r quantile(suff2_theta_star,.025)` and `r quantile(suff2_theta_star,.975)`. 
+We are $95\%$ confident that the true value of $\theta$ is between `r ci[1]` and `r ci[2]`.
 
 

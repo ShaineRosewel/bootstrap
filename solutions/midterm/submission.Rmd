@@ -30,7 +30,7 @@ bibliography: /home/scientists/sci01/Projects/bootstrap/common/ref.bib
 biblio-style: apalike
 csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review.csl
 nocite: |
-  @penn
+  @efron
 ---
 
 ```{r setup, include=FALSE} 
@@ -56,6 +56,18 @@ $\mu_A$ and $\mu_B$ represent the population mean counts for Methods A and B, re
 ```
 
 # Fishery
+
+The dataset fishery.csv contains 40 annual counts of the numbers of recruits (R) and spawners (S) in a salmon population. The units are in thousands of fish. Recruits are fish that enter the catchable population. Spawners are fish that are laying eggs. Spawners die after laying eggs. The classic model for the relationship between spawners and recruits is
+
+$$
+R = \frac{1}{\beta_0  + \frac{\beta_1}{S}}; \quad \beta_0 \geq 0 \text{ and }\beta_1 \geq 1
+$$
+
+We can fit such a model by using a linear regression given by
+
+$$
+\frac{1}{R_i}
+$$
 
 # References
 

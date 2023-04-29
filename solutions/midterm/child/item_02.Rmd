@@ -1,10 +1,13 @@
 ```{r micro,results = "hide"}
-source("../R/01_00_load_data.R")
+fishery <- read.csv("../../../problems/midterm/datasets/fishery.csv")*1000
+n <- nrow(fishery)
+fishery
 ```
 
 ## Bootstrap estimate of SE
 
-Use the bootstrap to estimate the standard error of $\hat\theta = \mu_A - \mu_B$, where $\mu_A$ and $\mu_B$ are sample means of counts for methods A and B, respectively. Use $B = 2000$ bootstrap samples. Assume the replicates are **unpaired**.  
+
+
 
   * Let $A=X$ and $Y=B$. I am changing the labeling so as not to confuse with the number of bootstrap samples, $B$.
   * sampling is unpaired
@@ -75,7 +78,7 @@ The bootstrap estimate of the standard error is `r suff1_se`.
 
 ## Histogram
 
-The histogram has a symmetric bell curve shape. I recalled in class that this is expected to be centered on the statistic. In this case the statistic is `r mean(microbiology$X)-mean(microbiology$Y)` while the mean of $\hat \theta^*$'s is `r mean(suff1_theta_star)` This is the reason why I chose the mean for the plug-in distribution. If the plug-in distribution is based on the sum, the histogram will be centered on a different, larger value, far from the statistic. It will also have a higher estimate of the standard error (`r suff2_se`).
+The histogram has a symmetric bell curve shape. I recalled in class that this is expected to be centered on the statistic. In this case the statistic is `r mean(microbiology$X)-mean(microbiology$Y)` while the mean of $\hat \theta^*$'s is `r mean(suff1_theta_star)` This is the reason why I chose the mean for the plug-in distribution. If the plug-in distribution is based on the sum, the histogram will be centered on a different, larger value, far from the statistic. It will also have a higher estimate of the standard error (`r suff2_se`). 
 
 ```{r echo = FALSE}
 hist(
@@ -91,6 +94,6 @@ hist(
 ci <- c(quantile(suff1_theta_star,.025),quantile(suff1_theta_star,.975))
 ```
 
-We are $95\%$ confident that the true value of $\theta$ is between `r ci[1]` and `r ci[2]`. If instead we use sum for the sufficient statistic, then the CI will be a lot wider, with the sample statistic, not even making it within the interval `r quantile(suff2_theta_star,.025)` and `r quantile(suff2_theta_star,.975)`. 
+We are $95\%$ confident that the true value of $\theta$ is between `r ci[1]` and `r ci[2]`. If instead we use sum for the sufficient statistic, then the CI will be a lot wider, with the sample statistic, not even making it within the interval from `r quantile(suff2_theta_star,.025)` to `r quantile(suff2_theta_star,.975)`. My guess is that the sum as sufficient statistic is centered on the difference of the sums, not the difference of means. 
 
 

@@ -1,9 +1,9 @@
-      source("../R/01_00_load_data.R")
+      #source("../R/01_00_load_data.R")
       print(seed)
-      get_theta_hat_star <- function(sufficient_stat = 'mean') {
+      get_theta_hat_star <- function(sufficient_stat = 'average') {
         
         # step 1
-        if (sufficient_stat == "mean") {
+        if (sufficient_stat == "average") {
           lambda_X <- mean(microbiology$X)
           lambda_Y <- mean(microbiology$Y)
         } else if (sufficient_stat == "sum")  {
@@ -24,8 +24,5 @@
         return(theta_hat_star)
       }
       
-      suff1_theta_star <- get_theta_hat_star("mean")
-      suff1_se <- sd(suff1_theta_star)
-      
-      suff2_theta_star <- get_theta_hat_star("sum")
-      suff2_se <- sd(suff2_theta_star)
+      suff_theta_star <- get_theta_hat_star("average")
+      suff_se <- sd(suff_theta_star)

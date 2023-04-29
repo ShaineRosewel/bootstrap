@@ -18,8 +18,8 @@ header-includes:
 - \usepackage{titling}
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
-- \fancyhead[RO,RE]{Matala, Lagazon}
-- \fancyhead[LO,LE]{Homework 1}
+- \fancyhead[RO,RE]{Matala}
+- \fancyhead[LO,LE]{Midterm}
 - \fancyfoot[LO,LE]{`r format(Sys.time(), 'Last rendered on %Y %B %d %X')`}
 - \fancyfoot[CO,CE]{}
 - \fancyfoot[RE,RO]{\thepage}
@@ -54,12 +54,6 @@ options(scipen = 1, digits = 5)
 # Item 2 Solutions
 
 ```{r, child = "child/item_02.Rmd"}
-
-```
-
-# Item 3 Solutions
-
-```{r, child = "child/item_03.Rmd"}
 
 ```
 
