@@ -30,7 +30,7 @@ __Algorithm:__
 \end{equation}  
 
 
-**Step 2**: Let $B$ be the number of bootstrap samples taken. With $n = $`r n` and for each method, sample from the plug-in distribution.
+**Step 2**: Let $B$ be the number of bootstrap samples taken. With $n =$ `r n` and for each method, sample from the plug-in distribution.
 
 
 \begin{equation}
@@ -55,11 +55,11 @@ B^*_{X,2000} &= \left\{x_{2000,1}^*, \dots, x_{2000,8}^*\right\} \overset{iid}\s
 
 **Step 3**: For each of the bootstrap samples, calculate $\hat\theta^*_b = \hat \mu_{X,b}^* - \hat \mu_{Y,b}^*; \quad b = 1, \dots 2000$.
 
-**Step 4**: For each of the bootstrap samples, calculate $\hat\theta^*_b = \hat \mu_{X,b}^* - \hat \mu_{Y,b}^*; \quad b = 1, \dots 2000$.\
+**Step 4**: Calculate
 
 \begin{equation}
 \begin{aligned}
-\widehat {se} \left(\hat \theta\right) = \sqrt \frac{\sum_{i=1}^n \left(\hat \theta_i^*-\bar{\hat \theta}^* \right)^2}{B-1};\ \ \bar{\hat \theta}^* = \frac{1}{B}\sum^B_{i=1} \hat \theta^*_i
+\widehat {se} \left(\hat \theta\right) = \sqrt \frac{\sum_{b=1}^B \left(\hat \theta_b^*-\bar{\hat \theta}^* \right)^2}{B-1};\ \ \bar{\hat \theta}^* = \frac{1}{B}\sum^B_{b=1} \hat \theta^*_b
 \end{aligned}
 \end{equation}  
 
@@ -69,12 +69,18 @@ R01_01 <- "../R/01_01_se_estimate.R"
 source(R01_01)
 ```
 
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_01, paste(rep("-", 41), collapse = "")))
+cat(paste(readLines(R01_01), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
 The bootstrap estimate of the standard error is `r suff_se`.
 
 
 ## Histogram
 
-The histogram has a symmetric bell curve shape. This is expected to be centered on the statistic. In this case the statistic is `r mean(microbiology$X)-mean(microbiology$Y)` while the mean of $\hat \theta^*$'s is `r mean(suff_theta_star)`.
+The histogram has a symmetric bell curve shape. This is expected to be centered on the statistic. In this case the statistic $\hat \theta$ is `r mean(microbiology$X)-mean(microbiology$Y)` while the mean of $\hat \theta^*$'s is `r mean(suff_theta_star)`.
 
 ```{r echo = FALSE}
 hist(
@@ -86,10 +92,6 @@ hist(
 
 ## Confidence Intervals
 
-```{r}
-ci <- c(quantile(suff_theta_star,.025),quantile(suff_theta_star,.975))
-```
-
-We are $95\%$ confident that the true value of $\theta$ is between `r ci[1]` and `r ci[2]`.
+We are $95\%$ confident that the true value of $\theta$ is between `r suff_ci[1]` and `r suff_ci[2]`. From my perspective, the interval is broad since the difference ranges from almost zero to a relatively large positive number. However, this gives us an idea that the difference is positive.
 
 

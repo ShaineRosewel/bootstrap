@@ -1,5 +1,3 @@
-      # wd: /home/scientists/sci01/Projects/bootstrap/solutions/ps_01/child
-      
       data <- "../../../problems/midterm/datasets/microbiology.RData"
       
       if (file.exists(data)) {

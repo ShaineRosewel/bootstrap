@@ -1,5 +1,3 @@
-      #source("../R/01_00_load_data.R")
-      print(seed)
       get_theta_hat_star <- function(sufficient_stat = 'average') {
         
         # step 1
@@ -25,4 +23,14 @@
       }
       
       suff_theta_star <- get_theta_hat_star("average")
+      
       suff_se <- sd(suff_theta_star)
+      #hist(
+      #  suff_theta_star,
+      #  main = expression(paste("Histogram of ", hat(theta), "*")),
+      #  xlab = expression(paste(hat(theta), "*")),
+      #)
+      suff_ci <- c(
+        quantile(suff_theta_star,.025),
+        quantile(suff_theta_star,.975)
+        )

@@ -1,99 +1,114 @@
-```{r micro,results = "hide"}
-fishery <- read.csv("../../../problems/midterm/datasets/fishery.csv")*1000
-n <- nrow(fishery)
-fishery
+Load the data and set the needed variables.
+
+```{r}
+R02_00 <- "../R/02_00_load_data.R"
+source(R02_00)
 ```
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R02_00, paste(rep("-", 41), collapse = "")))
+cat(paste(readLines(R02_00), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
+## Estimate $S_0$
+
+Fit the regression model and estimate $S_0$. Call this estimate $\hat S_0$.
+
+```{r}
+R02_01 <- "../R/02_01_stable.R"
+source(R02_01)
+```
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R02_01, paste(rep("-", 41), collapse = "")))
+cat(paste(readLines(R02_01), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
+The above code yields $\hat {\beta_0}=$ `r beta_hat[1]` and $\hat \beta_1=$ `r beta_hat[2]`.
+
+Stable state: Let $S_0 = R_0 \rightarrow \frac{1}{S_0} = \frac{1}{R_0} \leftrightarrow x_0 = y_0$:
+
+
+\begin{equation}
+\begin{aligned}
+y_0 &= \hat {\beta_0} + \hat {\beta_1} x_0 \\
+y_0 &= \hat {\beta_0} + \hat {\beta_1} y_0 \\
+y_0 - \hat {\beta_1} y_0 &= \hat {\beta_0} \\
+y_0(1 - \hat {\beta_1}) &= \hat {\beta_0} \\
+\hat y_0 &= \frac{\hat {\beta_0}}{1 - \hat {\beta_1}}
+\end{aligned}
+\end{equation} 
+
+
+It follows by substitution and more algebra that,
+
+
+\begin{equation}
+\begin{aligned}
+\frac{\hat {\beta_0}}{1 - \hat {\beta_1}} &= \hat {\beta_0} + \hat {\beta_1} x_0 \\
+\frac{\frac{\hat {\beta_0}}{1 - \hat {\beta_1}} - \hat {\beta_0}}{\hat \beta_1} &= \hat x_0 \\
+\end{aligned}
+\end{equation}
+
+
+Hence,
+
+\begin{equation}
+\begin{aligned}
+(\hat x_0, \hat y_0) = \left(\frac{\frac{\hat {\beta_0}}{1 - \hat {\beta_1}} - \hat {\beta_0}}{\hat \beta_1}, 
+\frac{\hat {\beta_0}}{1 - \hat {\beta_1}}\right) \iff \\
+(\hat S_0, \hat R_0) = \left( \frac{1}{\frac{\frac{\hat {\beta_0}}{1 - \hat {\beta_1}} - \hat {\beta_0}}{\hat \beta_1}}, 
+\frac{1}{\frac{\hat {\beta_0}}{1 - \hat {\beta_1}}} \right) \label{eq:stable}
+\end{aligned}
+\end{equation}
+
+Substituting the values of $\hat {\beta_0}$ and $\hat {\beta_0}$ to equation \ref{eq:stable}, we get $\hat S_0 =$ `r S_0` and $\hat R_0 =$ `r R_0`; they are equal, by definition of stable state.
+
 
 ## Bootstrap estimate of SE
 
+Use the bootstrap to obtain an estimate of the standard error of $\hat S_0$. Use $B = 2000$ bootstrap
+samples.
 
-
-
-  * Let $A=X$ and $Y=B$. I am changing the labeling so as not to confuse with the number of bootstrap samples, $B$.
-  * sampling is unpaired
-  * Poisson distribution is assumed. Hence, this is parametric bootstrap. Recall:
+  * This is nonparametric bootstrap since it is mentioned that no distribution is assumed.
+  * It is also mentioned that $S$ variable can be considered as fixed; as a result, we will do SRSWR from the empirical distribution of the residuals.
   
-  \begin{equation}
-  \begin{aligned}
-  \mathcal P(X = x \mid \lambda) = \frac{e^{-\lambda} \lambda^x}{x!}; \quad x = 0, 1, \dots; \quad 0 \leq \lambda < \infty
-  \end{aligned}
-  \end{equation}
-
-  * According to this reference. A sufficient statistic for the parameter of the Poisson distribution, $\lambda$ is $\sum_{i = 1}^n x_i$. Since it is sufficient to know the average if we know the sum (given the sample), then we can also take the mean as another sufficient statistic.
-
-
-__Algorithm:__
-
-**Step 1**: Calculate a sufficient statistic for $\lambda_X$ (method A) and $\lambda_Y$ (method B).
-
-\begin{equation}
-\begin{aligned}
-\hat \lambda_X = \frac {\sum_{i = 1}^n x_i}{n} \\
-\hat \lambda_Y = \frac {\sum_{i = 1}^n y_i}{n}
-\end{aligned}
-\end{equation}  
-
-
-**Step 2**: Let $B$ be the number of bootstrap samples taken. With $n = $`r n` and for each method, sample from the plug-in distribution.
-
-
-\begin{equation}
-\begin{aligned}
-B^*_{Y,1} &= \left\{y_{1,1}^*, \dots, y_{1,8}^*\right\} \overset{iid}\sim \mathcal P\left(\hat \lambda_Y\right)\\
-B^*_{Y,2} &= \left\{y_{2,1}^*, \dots, y_{2,8}^*\right\} \overset{iid}\sim \mathcal P\left(\hat \lambda_Y\right)\\
-\vdots &= \vdots \\
-B^*_{Y,2000} &= \left\{y_{2000,1}^*, \dots, y_{2000,8}^*\right\} \overset{iid}\sim \mathcal P\left(\hat \lambda_Y\right)\\
-\end{aligned}
-\end{equation}  
-
-
-\begin{equation}
-\begin{aligned}
-B^*_{X,1} &= \left\{x_{1,1}^*, \dots, x_{1,8}^*\right\} \overset{iid}\sim \mathcal P\left(\hat \lambda_X\right)\\
-B^*_{X,2} &= \left\{x_{2,1}^*, \dots, x_{2,8}^*\right\} \overset{iid}\sim \mathcal P\left(\hat \lambda_X\right)\\
-\vdots &= \vdots \\
-B^*_{X,2000} &= \left\{x_{2000,1}^*, \dots, x_{2000,8}^*\right\} \overset{iid}\sim \mathcal P\left(\hat \lambda_X\right)\\
-\end{aligned}
-\end{equation}  
-
-
-**Step 3**: For each of the bootstrap samples, calculate $\hat\theta^*_b = \hat \mu_{X,b}^* - \hat \mu_{Y,b}^*; \quad b = 1, \dots 2000$.
-
-**Step 4**: For each of the bootstrap samples, calculate $\hat\theta^*_b = \hat \mu_{X,b}^* - \hat \mu_{Y,b}^*; \quad b = 1, \dots 2000$.\
-
-\begin{equation}
-\begin{aligned}
-\widehat {se} \left(\hat \theta\right) = \sqrt \frac{\sum_{i=1}^n \left(\hat \theta_i^*-\bar{\hat \theta}^* \right)^2}{B-1};\ \ \bar{\hat \theta}^* = \frac{1}{B}\sum^B_{i=1} \hat \theta^*_i
-\end{aligned}
-\end{equation}  
-
-
-```{r se}
-R01_01 <- "../R/01_01_se_estimate.R"
-source(R01_01)
+The algorithm is already given in the regression handout, case 1a. In addition to that, we have to calculate the value $\hat S^*_0$, through equation \ref{eq:stable}, but for each bootstrap sample.
+  
+```{r}
+R02_02 <- "../R/02_02_se_estimate.R"
+source(R02_02)
 ```
 
-The bootstrap estimate of the standard error is `r suff1_se`.
+```{r}
+cat(paste0("  CODE FILENAME: ", R02_02, paste(rep("-", 41), collapse = "")))
+cat(paste(readLines(R02_02), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
 
+The bootstrap estimate of the standard error is `r stable_se`.
 
 ## Histogram
 
-The histogram has a symmetric bell curve shape. I recalled in class that this is expected to be centered on the statistic. In this case the statistic is `r mean(microbiology$X)-mean(microbiology$Y)` while the mean of $\hat \theta^*$'s is `r mean(suff1_theta_star)` This is the reason why I chose the mean for the plug-in distribution. If the plug-in distribution is based on the sum, the histogram will be centered on a different, larger value, far from the statistic. It will also have a higher estimate of the standard error (`r suff2_se`). 
+The histogram has a symmetric bell curve shape. This is expected to be centered around $\hat S_0 =$ `r S_0`. Indeed, the mean of the distribution below is `r mean(S_0_star)`.
 
 ```{r echo = FALSE}
 hist(
-  suff1_theta_star,
-  main = expression(paste("Histogram of ", hat(theta), "*")),
-  xlab = expression(paste(hat(theta), "*")),
-  )
+  S_0_star,
+  main = expression(paste("Histogram of ", hat(S)[0], "*")),
+  xlab = expression(paste(hat(S)[0], "*")))
 ```
 
 ## Confidence Intervals
 
-```{r}
-ci <- c(quantile(suff1_theta_star,.025),quantile(suff1_theta_star,.975))
-```
+We are $95\%$ confident that the true value of $\theta$ is between `r stable_ci[1]` and `r stable_ci[2]`. Since the values being dealt with are large, in my perspective, interval is neither too broad nor too narrow.
 
-We are $95\%$ confident that the true value of $\theta$ is between `r ci[1]` and `r ci[2]`. If instead we use sum for the sufficient statistic, then the CI will be a lot wider, with the sample statistic, not even making it within the interval from `r quantile(suff2_theta_star,.025)` to `r quantile(suff2_theta_star,.975)`. My guess is that the sum as sufficient statistic is centered on the difference of the sums, not the difference of means. 
+
+
+
+
+
 
 

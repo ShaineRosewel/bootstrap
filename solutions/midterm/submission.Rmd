@@ -6,7 +6,6 @@ output:
     toc: false
   citation_package: natbib
 fontsize: 12pt 
-indent: true
 header-includes:
 - \usepackage{amsmath}
 - \numberwithin{equation}{section}
@@ -42,7 +41,7 @@ knitr::opts_chunk$set(
   fig.align = 'center',
   fig.height = 4,
   fig.width = 5)
-options(scipen = 1, digits = 5)
+options(scipen = 1, digits = 7)
 ```
 
 # Microbiology
@@ -57,7 +56,7 @@ $\mu_A$ and $\mu_B$ represent the population mean counts for Methods A and B, re
 
 # Fishery
 
-The dataset fishery.csv contains 40 annual counts of the numbers of recruits (R) and spawners (S) in a salmon population. The units are in thousands of fish. Recruits are fish that enter the catchable population. Spawners are fish that are laying eggs. Spawners die after laying eggs. The classic model for the relationship between spawners and recruits is
+The dataset fishery.csv contains 40 annual counts of the numbers of recruits (R) and spawners (S) in a salmon population. The **units are in thousands of fish**. Recruits are fish that enter the catchable population. Spawners are fish that are laying eggs. Spawners die after laying eggs. The classic model for the relationship between spawners and recruits is
 
 $$
 R = \frac{1}{\beta_0  + \frac{\beta_1}{S}}; \quad \beta_0 \geq 0 \text{ and }\beta_1 \geq 1
@@ -66,8 +65,14 @@ $$
 We can fit such a model by using a linear regression given by
 
 $$
-\frac{1}{R_i}
+\frac{1}{R_i} = \beta_0 + \beta_1 \frac{1}{S_i} + \epsilon_i; \quad i = 1, \dots, 40
 $$
+
+The **S variable can be considered as fixed**. Suppose that fish are iid with mean 0 and finite variance, but their **distribution is unknown**. The total population abundance will only stabilize if $R = S$. Thus, the stable population level is the point where the line $R = S$ intersects the curve relating R and S. The total population will decline if fewer recruits are produced than the number of spawners who died producing them. If too many recruits are produced, the population will also decline eventually because there is not enough food for them all. Thus, only some middle level of recruits can be sustained indefinitely in a stable population. Let $S_0$ be the value of $S$ at the stable population level.
+
+```{r, child = "child/item_02.Rmd"}
+
+```
 
 # References
 

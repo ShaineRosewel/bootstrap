@@ -11,6 +11,37 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Sample with replacement $\left\{ e_1^*, \dots , e_n^*\right\}$ from $\left\{ e_1, \dots , e_n\right\}$ or sample from  $\left\{ \frac{1}{\sqrt{1-h_{11}}}e_1^*, \dots , \frac{1}{\sqrt{1-h_{nn}}} e_n^*\right\}$ (better since this keeps the variance constant)
 
+
+```{r}
+copper <- read.csv(file='datasets/copper.csv',header=T)
+content = copper[,1]; corrloss = copper[,2]
+plot(corrloss~content)
+n = nrow(copper)
+X <- cbind(rep(1,n),content)
+beta.hat <- solve(t(X)%*%X)%*%t(X)%*%corrloss #LS estimator for beta
+
+###point estimate  #theta = beta_1/beta_0
+ptest <- beta.hat[2,1]/beta.hat[1,1] #point estimate! but what is its SE?
+print(ptest)
+
+
+
+y.hat <- X%*%beta.hat
+resid <- corrloss - y.hat
+
+theta.star <- c()
+for(b in 1:10000){
+  res.star <- sample(resid,n,replace=T) #SRSWR of the residuals
+  y.star <- y.hat + res.star
+  beta.hat.star <- solve(t(X)%*%X)%*%t(X)%*%y.star #LS estimator of beta for boot sample
+  theta.star[b] <- beta.hat.star[2,1] / beta.hat.star[1,1]
+}
+
+sd(theta.star) #boot est of std. of theta-hat
+hist(theta.star,col='blue')
+quantile(theta.star,c(0.025,0.975))
+```
+
 ## Case 2
 
 Sample $e_i^
