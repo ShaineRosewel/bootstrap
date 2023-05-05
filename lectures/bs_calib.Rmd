@@ -1,0 +1,169 @@
+---
+title: "lecture_today"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Review
+
+Bootstrap percentile CI where, $\hat \theta_1^*, \dots, \hat\theta_B^* \rightarrow$ a $(1-\alpha)100\%$ bootstrap percentile CI for $\theta$ is $\left(\hat\theta_{\alpha/2}, \hat\theta_{1-\alpha/2}\right)$ works best if $\hat \theta$ is an unbiased estor of $\theta$
+
+## Bias-corrected and accelerated CI (BCa)
+
+- Efron (1987) JASA
+- presents a substantial improvement over the BS percentile CI in both theory and practice
+- it can still be erratic for small sample sizes
+- the endpoints of BCa are not necessarily the same as BS percentile CI
+- endspoints will depend on  
+  - $\hat a$, acceleration
+  - $\hat z_0$, bias-correction
+- BCa interval of intended average $(1-2\alpha)100\%$ is given by
+  - BCA: $\left(\hat \theta_{low}, \hat \theta_{up}\right) = \left(\hat \theta_{\alpha_1}^*, \theta_{\alpha_2}^*\right)$
+  
+  $$
+  \alpha_1 = \Phi \left( \hat z_0 + \frac{\hat z_0 + z_{\alpha}}{1-\hat a(\hat z_0 + z_\alpha)} \right) \\
+  \alpha_2 = \Phi \left( \hat z_0 + \frac{\hat z_0 + z_{1-\alpha}}{1-\hat a(\hat z_0 + z_{1-\alpha})} \right)
+  $$
+  - if $\hat a = 0$ and $\hat z_0 =0$, then the resulting BCa is the same as bootstrap percentile CI
+  
+  $$
+  \alpha_1 = \Phi \left( z_\alpha \right) = \alpha \\
+  \alpha_2 = \Phi \left( z_{1-\alpha} \right) = 1- \alpha
+  $$
+  
+  Aside: $\left( \hat \theta^*_\alpha, \hat \theta^*_{1-\alpha} \right), \quad (1-2\alpha)100\%$ CI
+  
+  - the bias-cirrection $(\hat z_0)$
+  
+  $$
+  \hat z_0 = \Phi^{-1} \left( \frac{\# \{\hat \theta _b^* < \hat \theta\}}{B} \right)
+  $$
+  
+  measures the discrepancy that median of $\hat \theta^*$ and $\hat \theta$ (ie median bias) in normal units
+  
+  - $\hat z_0 = 0$ exactly half of $\hat \theta^*_b$'s are less than $\hat \theta$
+  
+  - acceleration parameter
+  
+  $$
+  \hat a = \frac{\sum_{i = 1}^n \left(\hat \theta_{(\cdot)} - \hat \theta_{(i)} \right)^2}{6 \left[\sum_{i = 1}^n \left(\hat \theta_{(\cdot)} - \hat \theta_{(i)} \right)^2\right]^{\frac{3}{2}}}
+  $$
+  
+  where
+  
+  $\hat \theta_{(\cdot)} = \frac{1}{n}\sum^n_{i=1} {\hat \theta_{(i)}}$ and $\hat \theta_{(i)} =$ similar to $\hat \theta$ but computed after excluding the ith observation
+  
+  - note that the notations for $\hat \theta_{(\cdot)}$ and $\hat \theta_{(i)}$ are the same notations as in jackknife
+  
+  - the parameter $\hat a$ is called the acceleration parameter because it refers to th rate of change of the standard error of $\hat \theta$ wrt the true parameter $\theta$, measured on a normalized scale
+  
+  - it is proportional to the 
+  
+## Properties of the bias-corrected and accelerated CI
+
+- Transformation-respecting ($T(X_i), i = 1, \dots, n \rightarrow T(\hat \theta^*_{\alpha_1})$ and $T(\hat \theta^*_{\alpha_2})$) are still $BC_a$
+
+- second-order accurate (higher order, goes to true confidence level)
+
+  $$
+  P(\theta < \hat \theta_{low}) = \alpha + \mathcal O\left(\frac{1}{n}\right), \quad \text{goes down at a rate of }\frac{1}{n} \\
+  
+  P(\theta > \hat \theta_{up}) = \alpha + \mathcal O\left(\frac{1}{n}\right)
+  $$
+  
+- BI percentile CI is only first order accurate and but NOT trasnformation respecting
+- $BC_a$ os transformation respecting ans second-order accurate
+- $BC_a$ is recommended for general use, especially for nonparametric
+- BS-t is 2nd order accurate but NOT trasnformation respecting; not recommended for general nonparametric
+
+  $$
+  \theta \rightarrow (\hat \theta_{low}, \hat \theta_{up}) \\
+  \mathcal g(\theta) \nrightarrow (\mathcal g(\hat \theta_{low}), \mathcal g(\hat \theta_{up}))
+  $$
+  
+```{r}
+df <- data.frame(estimator  = c("bootstrap-t", "bootstrap percentile CI", "BCa", "BS calibration"),
+                 accuracy = c("2nd", "1st", "2nd", ""),
+                 transformation_resp = c("X", "/", "/", ""),
+                 range_preserving = c("X", "/", "/", ""))
+df
+
+```
+
+
+## Adaptive estimation and calibration
+
+(Ch 18 of E&T)
+
+- Consider an estimator $\hat \theta_\lambda(\mathbf X)$, depending on an adjustable parameter $\lambda$
+  - For example, $\hat \theta_\lambda(\mathbf x)$ might be the trimmed mean and $\lambda =$trimming proportion
+  - to apply the estimator to the data, we need to choose a value for $\lambda$
+  - We now assess $\hat \theta_\lambda(\mathbf x)$ for each $\lambda$ (ex form a grid: $\lambda \in \{0.025, 0.05, 0.075, 0.10, 0.125, 0.15\}$)
+  - choose $\lambda$ that optimizes the performance of $\hat \theta_\lambda(\mathbf x)$ for each $\lambda$ (define optimizes - small MSE? small variance? small bias?)
+  - Since the data themselves are telling us what procedure to use, this is called **adaptive estimation**.
+  - when this idea is applied to CI procedures, it is sometimes referred to as **calibration**
+
+
+### Bootstrap calibration
+
+- Suppose $\hat \theta [\alpha]$ is an estimate of the lower $\alpha$th confidence point for $\theta$
+
+  $$
+  P(\hat \theta [\alpha] \leq \theta) = 1-\alpha \\
+  (\hat \theta[\alpha], \infty)
+  $$
+- For instance 
+
+  $$
+  \hat \theta [\alpha] = \hat \theta - z_{1-\alpha}se(\hat \theta) \\
+  \hat \theta [\alpha] \text{ lower } \infty \text{ BS percentile point}
+  $$
+  
+- Actual average is rarely equal to the desired (nominal) coverage; often substantially different
+
+  $$
+  p(\lambda) = P(\hat \theta [\lambda] \leq \theta) = 1-\alpha, \quad\lambda \neq 2
+  $$
+  
+  where $\lambda$ is estimated from the data (adaptive estimation (calibration))
+  
+- if we knew the mapping $\alpha \rightarrow \lambda$, we could easily construct CI with ** coverage
+
+- Since generally we don't know this mapping, we  use the bootstrap to carry out the calibrator
+
+  $$
+  \hat p(\lambda) = P_*(\hat \theta^*[\lambda] \leq \hat \theta), \quad \text{BS estimate of }p(\lambda)
+  $$
+  
+- if $\hat \theta$ is fixed and the (*) refers to BS sampling from data
+
+- to approximate $\hat p(\lambda)$, we generate o number of BS samples, compute $\hat \theta^*_{\lambda}$ for each one and record the proportion of times that $\hat \theta^*[\lambda] \leq \hat \theta$
+
+  $$
+  \hat \theta^*[\lambda] \rightarrow \lambda_1, \dots, \lambda_m \\
+  \hat \theta^*[\lambda], \quad  \text{lower } \lambda \text{ percentile of } \hat \theta_1^*, \dots, \theta_B^*
+  $$
+  
+  Let $\hat \lambda$ be the value of $\lambda$ that satisfies $\tilde p (\lambda) =1-\alpha$
+  
+  
+  **Algorithm:** Confidence point calibration via the BS
+  
+  1. Generate B BS samples $\mathbf X^*_1, \dots, \mathbf X^*_B$
+  
+  2. For each BS sample, compute the $\alpha-$level confidence point $\hat \theta^*_b[\lambda]$ for a grid of values of $\lambda$
+  
+  3. For each value of $\lambda$ in the grid, compute
+  
+  $$
+  \hat p [\lambda] = \frac{\# \{\hat \theta^*_b[\lambda] \leq \hat \theta\}}{B}
+  $$
+  
+  4. Find the value of $\lambda$ satisfying $\hat p (\lambda) = 1 - \alpha$
+
+
+  
+  
