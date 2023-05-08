@@ -1,0 +1,62 @@
+## Complete table of $\alpha$-quantiles
+
+```{r}
+R0102 <- "../R/s01_i02_alpha_quantile.R"
+source(R0102)
+```
+
+```{r}
+cat(paste0("    CODE FILENAME: ", R0102))
+cat(paste(readLines(R0102), collapse="\n"),collapse = "\n")
+```
+
+```{r, results = 'asis'}
+library(stargazer)
+stargazer(t(data.frame("value" = quant)), 
+          covariate.labels = c("$\\alpha$"),
+          header=FALSE, type='latex',
+          title="${\\alpha}$-Quantiles of $r^*_{\\alpha}$")
+```
+
+## Compute $\widetilde{se}_{\alpha}(r)$ for $\alpha = 0.95, 0.90, 0.85$
+
+```{r}
+R0202 <- "../R/s02_i02_se.R"
+source(R0202)
+```
+
+```{r}
+cat(paste0("    CODE FILENAME: ", R0202))
+cat(paste(readLines(R0202), collapse="\n"),collapse = "\n")
+```
+
+```{r results = 'asis'}
+stargazer(t(data.frame("value" = robust_se_r)), 
+          covariate.labels = c("$\\alpha \\ (\\%)$"),
+          header=FALSE, type='latex',
+          title="Estimated $\\widetilde{se}_{\\alpha}(r)$",
+          label = "tab:original")
+```
+
+## Change maximum $r^*_b$ and recompute $\widetilde{se}_{\alpha}(r)$
+
+```{r}
+R0302 <- "../R/s03_i02_replace.R"
+source(R0302)
+```
+
+```{r}
+cat(paste0("    CODE FILENAME: ", R0302))
+cat(paste(readLines(R0302), collapse="\n"),collapse = "\n")
+```
+
+```{r results = 'asis'}
+stargazer(t(data.frame("value" = robust_se_r_replaced)), 
+          covariate.labels = c("$\\alpha \\ (\\%)$"),
+          header=FALSE, type='latex',
+          title="Estimated $\\widetilde{se}_{\\alpha}(r)$ with maximum $r^*_b$ replaced",
+          label = "tab:maxed")
+```
+
+The equal results shown in Table \@ref(tab:original) and Table \@ref(tab:maxed) demonstrates that indeed the estimator is robust.
+

@@ -1,0 +1,69 @@
+## Algorithm: $se(\hat{\beta_2})$ estimation
+
+```{r results = "hide"}
+R0103 <- "../R/s01_i03_load_data.R"
+source(R0103)
+```
+
+**Step 1**: Let $\epsilon_i \stackrel{\text{iid}}{\sim} \ N(0, \sigma^2), i = 1, \ldots, 24$. Under the model, $\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\epsilon}$, where $\boldsymbol{\epsilon} \sim N_p(\mathbf{0}, \sigma^2 \mathbf{I}_p)$, estimate
+
+\begin{equation}
+\begin{aligned}
+\hat{\boldsymbol{\beta}} = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}
+\end{aligned}
+\end{equation}
+
+\begin{equation}
+\begin{aligned}
+\hat{\sigma}^2 = \frac{1}{n} \sum_{i=1}^n \left(y_i-\mathbf{x}_i' \hat{\boldsymbol{\beta}} \right)^2, \quad \text{least squares OR} \\
+\hat{\sigma}^2 = \frac{1}{n-p} \sum_{i=1}^n \left(y_i-\mathbf{x}_i' \hat{\boldsymbol{\beta}} \right)^2, \quad \text{maximum likelihood} \\
+\end{aligned}
+\end{equation}
+
+**Step 2**: (a) Repeat $B$ times: Let $e^*_i \sim N(0, \hat{\sigma}^2), i = 1, \ldots, n$. Compute $y_i^* = \mathbf{x}_i' \hat{\boldsymbol{\beta}} + e^*_i, i = 1,\ldots,n$ (b) Obtain $\hat{\beta_2}^*$ from the $B$ OLS estimates for each $b$ bootstrap dataset.
+
+\begin{equation}
+\begin{aligned}
+\hat{\boldsymbol{\beta}}^*_b = \left( \mathbf{X}'\mathbf{X} \right)^{-1} \mathbf{X}'\mathbf{y}^*_b
+\end{aligned}
+\end{equation}
+
+**Step 3**: Calculate the standard error for the set of $\hat{\beta_2}^*$'s obtained in Step 2, b.
+
+## Algorithm implementation: $se(\hat{\beta_2})$ estimation
+
+```{r}
+R0203 <- "../R/s02_i03_reg.R"
+source(R0203)
+```
+
+The below implementation shows that the bootstrap estimate of the standard error of $\beta_2$ `r sd_boot` while its usual estimate is `r sd_usual`. The difference is very small (`r sd_boot-sd_usual`).
+
+```{r}
+cat(paste0("    CODE FILENAME: ", R0203))
+cat(paste(readLines(R0203), collapse="\n"),collapse = "\n")
+```
+
+## Algorithm: $\frac{\hat{\beta_1}}{\hat{\beta_3}}$ 95% CI estimation
+
+Repeat step 1 up to step 2.a. of the [Algorithm: $se(\hat{\beta_2})$ estimation] section.
+  
+Replace 2.b. with this: Obtain $\frac{\hat{\beta_1^*}}{\hat{\beta_3^*}}$ for each of the $B$ bootstrap datasets.
+
+**Step 3**: Calculate the $0.025^{th}$ and $0.975^{th}$ quantiles to get the 95% confidence interval.
+
+## Algorithm implementation: $\frac{\hat{\beta_1}}{\hat{\beta_3}}$ 95% CI estimation
+
+```{r}
+R0403 <- "../R/s04_i03_ratio.R"
+source(R0403)
+```
+
+We are 95% confident that the true value of the ratio is between `r ci_ratio_boot[1]` and `r ci_ratio_boot[2]`. The interval is quite large but it includes 1, which means that the effects of the index of publication quality and index of success in obtaining granting support are likely to be equal.
+
+```{r}
+cat(paste0("    CODE FILENAME: ", R0403))
+cat(paste(readLines(R0403), collapse="\n"),collapse = "\n")
+```
+
+

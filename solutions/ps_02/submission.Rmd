@@ -1,0 +1,77 @@
+---
+number_sections: true
+fig_caption: yes
+output:
+  bookdown::pdf_document2:
+    toc: false
+  citation_package: natbib
+fontsize: 12pt 
+indent: true
+header-includes:
+- \usepackage{amsmath}
+- \numberwithin{equation}{section}
+- \usepackage{setspace}\singlespacing
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \usepackage{indentfirst}
+- \usepackage{titling}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[RO,RE]{Matala}
+- \fancyhead[LO,LE]{Midterm}
+- \fancyfoot[LO,LE]{`r format(Sys.time(), 'Last rendered on %Y %B %d %X')`}
+- \fancyfoot[CO,CE]{}
+- \fancyfoot[RE,RO]{\thepage}
+- \fancypagestyle{plain}{\pagestyle{fancy}}
+geometry: margin=2cm
+papersize: a4
+bibliography: /home/scientists/sci01/Projects/bootstrap/common/ref.bib
+biblio-style: apalike
+csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review.csl
+nocite: |
+  @sonnet
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+  echo = FALSE, 
+  comment = NA, 
+  message = FALSE, 
+  warning = FALSE,
+  fig.align = 'center',
+  fig.height = 4,
+  fig.width = 5)
+options(scipen = 1, digits = 5)
+```
+
+# Rats
+
+As a small example, the survival times of 9 rats were 10, 27, 30, 40, 46, 51, 52, 104, and 146 days. Because of the skewness in the data, consider estimating the population median survival time $\theta$ through the sample median.
+
+Let $n = 9$ and $\tilde \theta$ be the sample median.
+
+```{r}
+survival_times <- c(10, 27, 30, 40, 46, 51, 52, 104, 146)
+```
+
+
+```{r, child = "child/item_01.Rmd"}
+
+```
+
+# Item 2 Solutions
+
+```{r, child = "child/item_02.Rmd"}
+
+```
+
+# References
+
+<div id="refs"></div>
+
+# Appendix
+
+```{r, child = "child/appendix.Rmd"}
+
+```
