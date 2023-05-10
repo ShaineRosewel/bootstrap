@@ -14,7 +14,6 @@ header-includes:
 - \usepackage{pdflscape}
 - \newcommand{\blandscape}{\begin{landscape}}
 - \newcommand{\elandscape}{\end{landscape}}
-- \usepackage{indentfirst}
 - \usepackage{titling}
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
@@ -40,8 +39,8 @@ knitr::opts_chunk$set(
   message = FALSE, 
   warning = FALSE,
   fig.align = 'center',
-  fig.height = 4,
-  fig.width = 5)
+  fig.height = 4.5,
+  fig.width = 5.5)
 options(scipen = 1, digits = 5)
 ```
 
@@ -60,7 +59,9 @@ survival_times <- c(10, 27, 30, 40, 46, 51, 52, 104, 146)
 
 ```
 
-# Item 2 Solutions
+# Spatial test
+
+Consider the spatial test data from Table 14.1 of Efron and Tibshirani (1993) shown below. From the table's description, it is clear that the measurements A and B are paired. Suppose the data consist of a random sample from an unknown joint distribution of A and B. Whenever ratios are scientifically or statistically preferred to differences, we gain stability by considering the logarithm of the ratios. Let $\theta_1 = \log E \left(\frac{A_i}{B_i}\right)$, $\theta_2 = E \left(\log \frac{A_i}{B_i}\right)$ for all $i$. Exclude observation #14 because the logarithm of its ratio is undefined. Use 2000 bootstrap samples.
 
 ```{r, child = "child/item_02.Rmd"}
 

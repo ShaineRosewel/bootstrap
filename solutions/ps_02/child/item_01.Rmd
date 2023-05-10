@@ -1,31 +1,33 @@
-## bootstrap-t method
+## bootstrap-t method: median
 
 Compute a 95% CI for $\theta$ using the bootstrap-$t$ method. Use $B_1 = 1000$ first-level bootstrap samples and $B_2 = 50$ second level bootstrap samples (to estimate the standard error). Interpret the CI.
 
 ```{r}
 survival_times <- c(10, 27, 30, 40, 46, 51, 52, 104, 146)
 sample_median <- median(survival_times)
-sample_median
+seed <- 7
+B1 <- 1000
+B2 <- 50
+n <- 9
 ```
 
 ```{r}
-
-set.seed(1000)
+set.seed(seed)
 boot_fn <- function(i) {
   #taking 1st level boot
-  law.boot <- sample(survival_times, n, replace = TRUE)
-  r.boot <- median(law.boot)
+  survival_boot <- sample(survival_times, n, replace = TRUE)
+  median_boot <- median(survival_boot)
 
   #taking 2nd level boot
-  r.boot2 <- replicate(B2, {
-    law.boot2 <- sample(law.boot, n, replace = TRUE)
-    median(law.boot2)
+  median_boot2 <- replicate(B2, {
+    survival_boot2 <- sample(survival_boot, n, replace = TRUE)
+    median(survival_boot2)
   })
 
-  se.boot <- sd(r.boot2)
-  t.boot <- (r.boot - r) / se.boot
+  se_boot <- sd(median_boot2)
+  t_boot <- (median_boot - sample_median) / se_boot
   
-  result_list <- list(r = r.boot, t = t.boot)
+  result_list <- list(r = median_boot, t = t_boot)
 
   return(result_list)
 }
@@ -33,28 +35,23 @@ boot_fn <- function(i) {
 
 
 
-```{r}
 
-B1 <- 1000
-B2 <- 50
-n <- 9
-r <- sample_median
-set.seed(7)
-startTime <- Sys.time()
-res = sapply(1:1000, boot_fn)
-endTime <- Sys.time()
-endTime - startTime
+
+```{r}
+set.seed(seed)
+res = sapply(1:B1, boot_fn)
 ses <- unlist(res[1,])
 tbs <- unlist(res[2,])
 
-se.r <- sd(ses) #bootstrap estimate of the SE
-lower <- sample_median - quantile(tbs,.975)*se.r
-upper <- sample_median - quantile(tbs,.025)*se.r
-c(lower,upper)
-
+se_median <- sd(ses) #bootstrap estimate of the SE
+lower <- sample_median - quantile(tbs,.975)*se_median
+upper <- sample_median - quantile(tbs,.025)*se_median
+#c(lower,upper)
 ```
+We are 95% confident that the true value of the median is between `r lower` and `r upper`.
 
-## bootstrap percentile CI
+
+## bootstrap percentile CI: median
 
 Compute a 95% CI for $\theta$ using the bootstrap percentile CI with B = 1000 bootstrap samples.
 Interpret the CI.
@@ -62,62 +59,129 @@ Interpret the CI.
 ```{r}
 percentile_ci <- function(estimate = "median") {
   #taking 1st level boot
-  law.boot <- sample(survival_times, n, replace = TRUE)
+  survival_boot <- sample(survival_times, n, replace = TRUE)
   
   if (estimate == "median") {
-    r.boot <- median(law.boot)
+    est_boot <- median(survival_boot)
   } else if (estimate == "mean") {
-    r.boot <- mean(law.boot)
+    est_boot <- mean(survival_boot)
   }
   
-  return(r.boot)
+  return(est_boot)
+}
+
+bootstrap_fn <- function(estimate = "median", meth = "percentile") {
+  #taking 1st level boot
+  survival_boot <- sample(survival_times, n, replace = TRUE)
+  
+  if (estimate == "median") {
+    est_boot <- median(survival_boot)
+    if (meth == "percentile") {
+      return(est_boot)
+    } else if (meth == "bca") {
+      sample_est <- median(survival_times)
+      #taking 2nd level boot
+      est_boot2 <- replicate(B2, {
+        survival_boot2 <- sample(survival_boot, n, replace = TRUE)
+        median(survival_boot2)
+        })
+    }
+  } else if (estimate == "mean") {
+    est_boot <- mean(survival_boot)
+    if (meth == "percentile") {
+      return(est_boot)
+    } else if (meth == "bca") {
+      sample_est <- mean(survival_times)
+      #taking 2nd level boot
+      est_boot2 <- replicate(B2, {
+        survival_boot2 <- sample(survival_boot, n, replace = TRUE)
+        mean(survival_boot2)
+        })
+    }
+  }
+
+  se_boot <- sd(est_boot2)
+  t_boot <- (est_boot - sample_est) / se_boot
+  
+  result_list <- list(r = est_boot, t = t_boot)
+
+  return(result_list)
 }
 ```
 
 ```{r}
-startTime <- Sys.time()
-set.seed(7)
-res_median = sapply(1:1000, function(.){percentile_ci(estimate = "median")})
-endTime <- Sys.time()
-endTime - startTime
-c(quantile(res,.025),quantile(res,.975))
+res1 = sapply(1:B1, function(.){bootstrap_fn(estimate = "mean", meth = "bca")})
+#c(quantile(res_median1,.025),quantile(res_median1,.975))
+
+set.seed(seed)
+res1 = sapply(1:B1, function(.){bootstrap_fn(estimate = "median", meth = "bca")})
+ses <- unlist(res1[1,])
+tbs <- unlist(res1[2,])
+
+se_median <- sd(ses) #bootstrap estimate of the SE
+lower1 <- sample_median - quantile(tbs,.975)*se_median
+upper1 <- sample_median - quantile(tbs,.025)*se_median
 ```
 
-## mean time between failures
+
+```{r}
+set.seed(seed)
+res_median = sapply(1:B1, function(.){percentile_ci(estimate = "median")})
+c(quantile(res_median,.025),quantile(res_median,.975))
+```
+
+We are 95% confident that the true value of the median is between `r quantile(res_median,.025)` and `r quantile(res_median,.975)`.
+
+
+## bootstrap percentile CI: mean
 
 Compute a 95% confidence interval for the mean time between failures $\theta$ using the basic bootstrap method with B = 1000 bootstrap samples. Interpret the CI.
 
 ```{r}
-startTime <- Sys.time()
 set.seed(7)
-res_mean = sapply(1:1000, function(.){percentile_ci(estimate = "mean")})
-endTime <- Sys.time()
-endTime - startTime
-c(quantile(res,.025),quantile(res,.975))
+res_mean = sapply(1:B1, function(.){percentile_ci(estimate = "mean")})
+#c(quantile(res_mean,.025),quantile(res_mean,.975))
 ```
-
+We are 95% confident that the true value of the mean is between `r quantile(res_mean,.025)` and `r quantile(res_mean,.975)`.
 
 ## density estimate
 
-
 Plot a density estimate of the data. In R, you can do this through the density function. Compare
-the results in parts (a), (b), and (c). If there is a difference in the results, does it have to do with the shape of the data?
+the results in parts (a), (b), and (c). If there is a difference in the results, does it have to do with the shape of the data?  
+
+
+First, the percentile CI's focuse on areas in which the data has a higher concentration. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI base on the mean. The mean is pulled to the right due to some extremely high values (104, 146). It could be observed that the percentile CI's are narrower than that of the $BC_a$ and that the $BC_a$ appears to consider areas of large concentration from both the mean and the median percentile CI's.
+
+
+
 
 ```{r}
-hist(tbs)
-plot(density(tbs))
+plot(density(res_median), 
+     ylim = range(density(res_median)$y, 
+                  density(ses)$y), 
+     lty = 'dashed',
+     main = "Bootstrap Density Plot",
+     xlab = '')
+lines(density(res_mean), lty = 'dotted')
+
+abline(v=quantile(res_mean,.025),col="orange")
+abline(v=quantile(res_mean,.975),col="orange")
+text(quantile(res_mean,.975)+4, 0.053,expression(paste("%", ile[mean])), cex=0.7)
+
+abline(v=quantile(res_median,.025),col="lightgreen")
+abline(v=quantile(res_median,.975),col="lightgreen")
+text(quantile(res_median,.975), 0.072,expression(paste("%", ile[median])), cex=0.7)
+
+abline(v=quantile(lower,.025),col="violet")
+abline(v=quantile(upper,.975),col="violet")
+text(quantile(upper,.975)-1, 0.06, expression(BC[a_mean]), cex=0.7)
+
+
+text(140, 0.06, "median ---", cex=0.7)
+text(139.5, 0.055, "mean   ...", cex=0.7)
 ```
 
 
-```{r}
-hist(res_median)
-plot(density(res_median))
-```
-
-```{r}
-hist(res_mean)
-plot(density(res_mean))
-```
 
 
 
@@ -131,82 +195,3 @@ plot(density(res_mean))
 
 
 
-
-
-
-
-Algorithm: bootstrap estimate of $\widehat{se}(r)$
-
-**Step 1**: Let $B$ be the number of bootstrap samples taken. With $n = 15$, do SRSWR from schools 1 to 15.
-
-\begin{equation}
-\begin{aligned}
-B^*_1 &= \left\{(X^*_{11}, Y^*_{11}), (X^*_{21}, Y^*_{21}), \ldots, (X^*_{n1}, Y^*_{n1})\right\} \\
-B^*_2 &= \left\{(X^*_{12}, Y^*_{12}), (X^*_{22}, Y^*_{22}), \ldots, (X^*_{n2}, Y^*_{n2})\right\} \\
-\vdots &= \vdots \\
-B^*_{B} &= \left\{(X^*_{1B}, Y^*_{1B}), (X^*_{2B}, Y^*_{2B}), \ldots, (X^*_{nB}, Y^*_{nB})\right\} \\
-\end{aligned}
-\end{equation}  
-
-
-**Step 2**: Let $S^*_{x_b}$ and $S^*_{y_b}$ be the standard deviations of the variables, $X^*_b$ and $Y^*_b$, respectively, where $b = \left\{1, 2, \ldots, B\right\}$. Calculate the pearson product coefficient of correlation, $r^*_b$
-
-\begin{equation}
-\begin{aligned}
-r_b^* &= \frac{\frac{1}{n-1} \sum_{i = 1}^n \left(X^*_{ib} - {\bar{X}}_b^*\right) \left(Y_{ib}^* - {\bar{Y}}^*_b\right) }{ S^*_{x_b} S^*_{y_b}}
-\end{aligned}
-\end{equation}
-
-to yield
-
-\begin{equation}
-\begin{aligned}
-r &= \left\{r^*_1, r^*_2, \ldots, r^*_B\right\} 
-\end{aligned}
-\end{equation}
-
-**Step 3**: Calculate bootstrap estimate of $\widehat{se}(r)$ using
-
-\begin{equation}
-\begin{aligned}
-\widehat{se}(r) &= \sqrt{ \frac{\sum_{b=1}^B \left( r_b^* - {\bar{r}}^* \right)^2}{B-1} }
-\end{aligned}
-\end{equation}
-
-## Algorithm implementation: bootstrap estimate of $\widehat{se}(r)$
-
-```{r results = "hide"}
-source("../R/s01_i01_load_data.R")
-```
-
-```{r se}
-R0201 <- "../R/s02_i01_bs_sampling.R"
-source(R0201)
-```
-
-```{r algo}
-cat(paste0("    CODE FILENAME: ", R0201))
-cat(paste(readLines(R0201), collapse="\n"),collapse = "\n")
-```
-
-  i.  bootstrap estimate of the standard error of $r$: `r se_r_boot`
-  ii. 95% confidence interval for $\rho$ (the true population correlation): (`r ci_r_boot`)
-  iii. a histogram showing the bootstrap distribution of the correlation $r$
-
-```{r}
-hist(r)
-```
-
-## Change maximum $r^*_b$ and recompute bootstrap estimate of $\widehat{se}(r)$
-
-```{r}
-R0301 <- "../R/s03_i01_max_value.R"
-source(R0301)
-```
-
-```{r}
-cat(paste0("    CODE FILENAME: ", R0301))
-cat(paste(readLines(R0301), collapse="\n"),collapse = "\n")
-```
-
-The original maximum of $r^*_b$'s is `r r_max` while the new one is `r r_replaced_max`. Calculating the new $\widehat{se}(r^*)$ gives the value `r se_r_replaced_boot`. This meant an increase of `r se_percent_change`% compared to the original value.

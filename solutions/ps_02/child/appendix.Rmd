@@ -13,11 +13,11 @@ cat(paste(readLines(R0101), collapse="\n"),collapse = "\n")
 ## Code to read data for item 3
 
 ```{r results = "hide"}
-R0103 <- "../R/s01_i03_load_data.R"
+R0102 <- "../R/s01_i01_load_data.R"
 source(R0101)
 ```
 
 ```{r}
-cat(paste0("    CODE FILENAME: ", R0103))
-cat(paste(readLines(R0103), collapse="\n"),collapse = "\n")
+cat(paste0("    CODE FILENAME: ", R0102))
+cat(paste(readLines(R0102), collapse="\n"),collapse = "\n")
 ```
