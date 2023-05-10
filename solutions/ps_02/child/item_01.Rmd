@@ -11,65 +11,8 @@ B2 <- 50
 n <- 9
 ```
 
-```{r}
-set.seed(seed)
-boot_fn <- function(i) {
-  #taking 1st level boot
-  survival_boot <- sample(survival_times, n, replace = TRUE)
-  median_boot <- median(survival_boot)
-
-  #taking 2nd level boot
-  median_boot2 <- replicate(B2, {
-    survival_boot2 <- sample(survival_boot, n, replace = TRUE)
-    median(survival_boot2)
-  })
-
-  se_boot <- sd(median_boot2)
-  t_boot <- (median_boot - sample_median) / se_boot
-  
-  result_list <- list(r = median_boot, t = t_boot)
-
-  return(result_list)
-}
-```
-
-
-
-
 
 ```{r}
-set.seed(seed)
-res = sapply(1:B1, boot_fn)
-ses <- unlist(res[1,])
-tbs <- unlist(res[2,])
-
-se_median <- sd(ses) #bootstrap estimate of the SE
-lower <- sample_median - quantile(tbs,.975)*se_median
-upper <- sample_median - quantile(tbs,.025)*se_median
-#c(lower,upper)
-```
-We are 95% confident that the true value of the median is between `r lower` and `r upper`.
-
-
-## bootstrap percentile CI: median
-
-Compute a 95% CI for $\theta$ using the bootstrap percentile CI with B = 1000 bootstrap samples.
-Interpret the CI.
-
-```{r}
-percentile_ci <- function(estimate = "median") {
-  #taking 1st level boot
-  survival_boot <- sample(survival_times, n, replace = TRUE)
-  
-  if (estimate == "median") {
-    est_boot <- median(survival_boot)
-  } else if (estimate == "mean") {
-    est_boot <- mean(survival_boot)
-  }
-  
-  return(est_boot)
-}
-
 bootstrap_fn <- function(estimate = "median", meth = "percentile") {
   #taking 1st level boot
   survival_boot <- sample(survival_times, n, replace = TRUE)
@@ -109,26 +52,37 @@ bootstrap_fn <- function(estimate = "median", meth = "percentile") {
 }
 ```
 
-```{r}
-res1 = sapply(1:B1, function(.){bootstrap_fn(estimate = "mean", meth = "bca")})
-#c(quantile(res_median1,.025),quantile(res_median1,.975))
 
+
+
+
+
+```{r}
 set.seed(seed)
-res1 = sapply(1:B1, function(.){bootstrap_fn(estimate = "median", meth = "bca")})
-ses <- unlist(res1[1,])
-tbs <- unlist(res1[2,])
+res = sapply(1:B1, function(.){bootstrap_fn(estimate = "median", meth = "bca")})
+ses <- unlist(res[1,])
+tbs <- unlist(res[2,])
 
 se_median <- sd(ses) #bootstrap estimate of the SE
-lower1 <- sample_median - quantile(tbs,.975)*se_median
-upper1 <- sample_median - quantile(tbs,.025)*se_median
+lower <- sample_median - quantile(tbs,.975)*se_median
+upper <- sample_median - quantile(tbs,.025)*se_median
+#c(lower,upper)
 ```
+We are 95% confident that the true value of the median is between `r lower` and `r upper`.
+
+
+## bootstrap percentile CI: median
+
+Compute a 95% CI for $\theta$ using the bootstrap percentile CI with B = 1000 bootstrap samples.
+Interpret the CI.
 
 
 ```{r}
 set.seed(seed)
-res_median = sapply(1:B1, function(.){percentile_ci(estimate = "median")})
+res_median = sapply(1:B1, function(.){bootstrap_fn(estimate = "median", meth = "percentile")})
 c(quantile(res_median,.025),quantile(res_median,.975))
 ```
+
 
 We are 95% confident that the true value of the median is between `r quantile(res_median,.025)` and `r quantile(res_median,.975)`.
 
@@ -137,11 +91,13 @@ We are 95% confident that the true value of the median is between `r quantile(re
 
 Compute a 95% confidence interval for the mean time between failures $\theta$ using the basic bootstrap method with B = 1000 bootstrap samples. Interpret the CI.
 
+
 ```{r}
-set.seed(7)
-res_mean = sapply(1:B1, function(.){percentile_ci(estimate = "mean")})
-#c(quantile(res_mean,.025),quantile(res_mean,.975))
+set.seed(seed)
+res_mean = sapply(1:B1, function(.){bootstrap_fn(estimate = "mean", meth = "percentile")})
+c(quantile(res_mean,.025),quantile(res_mean,.975))
 ```
+
 We are 95% confident that the true value of the mean is between `r quantile(res_mean,.025)` and `r quantile(res_mean,.975)`.
 
 ## density estimate
@@ -151,8 +107,6 @@ the results in parts (a), (b), and (c). If there is a difference in the results,
 
 
 First, the percentile CI's focuse on areas in which the data has a higher concentration. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI base on the mean. The mean is pulled to the right due to some extremely high values (104, 146). It could be observed that the percentile CI's are narrower than that of the $BC_a$ and that the $BC_a$ appears to consider areas of large concentration from both the mean and the median percentile CI's.
-
-
 
 
 ```{r}
