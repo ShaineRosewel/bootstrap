@@ -43,7 +43,7 @@ knitr::opts_chunk$set(
 options(scipen = 1, digits = 5)
 ```
 
-# Rats
+# Survival time
 
 As a small example, the survival times of 9 rats were 10, 27, 30, 40, 46, 51, 52, 104, and 146 days. Because of the skewness in the data, consider estimating the population median survival time $\theta$ through the sample median.
 
