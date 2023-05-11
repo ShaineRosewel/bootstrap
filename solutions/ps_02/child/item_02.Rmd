@@ -1,11 +1,6 @@
 ```{r}
-R0102 <- "../R/s01_i01_load_data.R"
-source(R0102)
-```
-
-```{r}
-cat(paste0("    CODE FILENAME: ", R0102))
-cat(paste(readLines(R0102), collapse="\n"),collapse = "\n")
+R0201 <- "../R/02_01_load_data.R"
+source(R0201)
 ```
 
 ## Bootstrap percentile CI for $\theta_1$

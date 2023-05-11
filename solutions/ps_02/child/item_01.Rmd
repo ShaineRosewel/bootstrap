@@ -1,138 +1,88 @@
+```{r}
+R01_01 <- "../R/01_01_load_data.R"
+source(R01_01)
+```
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_01, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R01_01), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
 ## bootstrap-t method: median
 
-Compute a 95% CI for $\theta$ using the bootstrap-$t$ method. Use $B_1 = 1000$ first-level bootstrap samples and $B_2 = 50$ second level bootstrap samples (to estimate the standard error). Interpret the CI.
-
-```{r}
-survival_times <- c(10, 27, 30, 40, 46, 51, 52, 104, 146)
-sample_median <- median(survival_times)
-seed <- 7
-B1 <- 1000
-B2 <- 50
-n <- 9
-```
+Compute a 95% CI for $\theta$ using the bootstrap-$t$ method. Use $B_1 = 1000$ first-level bootstrap samples and $B_2 = 50$ second level bootstrap samples (to estimate the standard error).
 
 
 ```{r}
-bootstrap_fn <- function(estimate = "median", meth = "percentile") {
-  #taking 1st level boot
-  survival_boot <- sample(survival_times, n, replace = TRUE)
-  
-  if (estimate == "median") {
-    est_boot <- median(survival_boot)
-    if (meth == "percentile") {
-      return(est_boot)
-    } else if (meth == "bca") {
-      sample_est <- median(survival_times)
-      #taking 2nd level boot
-      est_boot2 <- replicate(B2, {
-        survival_boot2 <- sample(survival_boot, n, replace = TRUE)
-        median(survival_boot2)
-        })
-    }
-  } else if (estimate == "mean") {
-    est_boot <- mean(survival_boot)
-    if (meth == "percentile") {
-      return(est_boot)
-    } else if (meth == "bca") {
-      sample_est <- mean(survival_times)
-      #taking 2nd level boot
-      est_boot2 <- replicate(B2, {
-        survival_boot2 <- sample(survival_boot, n, replace = TRUE)
-        mean(survival_boot2)
-        })
-    }
-  }
-
-  se_boot <- sd(est_boot2)
-  t_boot <- (est_boot - sample_est) / se_boot
-  
-  result_list <- list(r = est_boot, t = t_boot)
-
-  return(result_list)
-}
+R01_02 <- "../R/01_02_bst_median.R"
+source(R01_02)
 ```
 
 
-
-
-
-
-```{r}
-set.seed(seed)
-res = sapply(1:B1, function(.){bootstrap_fn(estimate = "median", meth = "bca")})
-ses <- unlist(res[1,])
-tbs <- unlist(res[2,])
-
-se_median <- sd(ses) #bootstrap estimate of the SE
-lower <- sample_median - quantile(tbs,.975)*se_median
-upper <- sample_median - quantile(tbs,.025)*se_median
-#c(lower,upper)
-```
 We are 95% confident that the true value of the median is between `r lower` and `r upper`.
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_02, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R01_02), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
 
 
 ## bootstrap percentile CI: median
 
 Compute a 95% CI for $\theta$ using the bootstrap percentile CI with B = 1000 bootstrap samples.
-Interpret the CI.
-
 
 ```{r}
-set.seed(seed)
-res_median = sapply(1:B1, function(.){bootstrap_fn(estimate = "median", meth = "percentile")})
-c(quantile(res_median,.025),quantile(res_median,.975))
+R01_03 <- "../R/01_03_percentile_median.R"
+source(R01_03)
 ```
 
 
 We are 95% confident that the true value of the median is between `r quantile(res_median,.025)` and `r quantile(res_median,.975)`.
 
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_03, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R01_03), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
 
 ## bootstrap percentile CI: mean
 
-Compute a 95% confidence interval for the mean time between failures $\theta$ using the basic bootstrap method with B = 1000 bootstrap samples. Interpret the CI.
-
+Compute a 95% confidence interval for the mean time between failures $\theta$ using the basic bootstrap method with B = 1000 bootstrap samples.
 
 ```{r}
-set.seed(seed)
-res_mean = sapply(1:B1, function(.){bootstrap_fn(estimate = "mean", meth = "percentile")})
-c(quantile(res_mean,.025),quantile(res_mean,.975))
+R01_04 <- "../R/01_04_percentile_mean.R"
+source(R01_04)
 ```
 
+
 We are 95% confident that the true value of the mean is between `r quantile(res_mean,.025)` and `r quantile(res_mean,.975)`.
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_04, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R01_04), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
 
 ## density estimate
 
 Plot a density estimate of the data. In R, you can do this through the density function. Compare
-the results in parts (a), (b), and (c). If there is a difference in the results, does it have to do with the shape of the data?  
+the results in parts (a), (b), and (c).  
 
 
-First, the percentile CI's focuse on areas in which the data has a higher concentration. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI base on the mean. The mean is pulled to the right due to some extremely high values (104, 146). It could be observed that the percentile CI's are narrower than that of the $BC_a$ and that the $BC_a$ appears to consider areas of large concentration from both the mean and the median percentile CI's.
-
+First, the percentile CI's focus on areas in which the data has a higher concentration. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI based on the mean. The mean is pulled to the right due to some extremely high values (104, 146). It could be observed that the percentile CI's are narrower than that of the bootstrap-t and that the latter appears to consider areas of large concentration from both the mean and the median percentile CI's.
 
 ```{r}
-plot(density(res_median), 
-     ylim = range(density(res_median)$y, 
-                  density(ses)$y), 
-     lty = 'dashed',
-     main = "Bootstrap Density Plot",
-     xlab = '')
-lines(density(res_mean), lty = 'dotted')
+R01_05 <- "../R/01_05_density_plot.R"
+source(R01_05)
+```
 
-abline(v=quantile(res_mean,.025),col="orange")
-abline(v=quantile(res_mean,.975),col="orange")
-text(quantile(res_mean,.975)+4, 0.053,expression(paste("%", ile[mean])), cex=0.7)
-
-abline(v=quantile(res_median,.025),col="lightgreen")
-abline(v=quantile(res_median,.975),col="lightgreen")
-text(quantile(res_median,.975), 0.072,expression(paste("%", ile[median])), cex=0.7)
-
-abline(v=quantile(lower,.025),col="violet")
-abline(v=quantile(upper,.975),col="violet")
-text(quantile(upper,.975)-1, 0.06, expression(BC[a_mean]), cex=0.7)
-
-
-text(140, 0.06, "median ---", cex=0.7)
-text(139.5, 0.055, "mean   ...", cex=0.7)
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_05, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R01_05), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 ```
 
 

@@ -1,23 +1,11 @@
-## Code to read data for items 1 & 2
+## Code to read data for item 2
 
 ```{r results = "hide"}
-R0101 <- "../R/s01_i01_load_data.R"
-source(R0101)
+R0201 <- "../R/02_01_load_data.R"
+source(R0201)
 ```
 
 ```{r}
-cat(paste0("    CODE FILENAME: ", R0101))
-cat(paste(readLines(R0101), collapse="\n"),collapse = "\n")
-```
-
-## Code to read data for item 3
-
-```{r results = "hide"}
-R0102 <- "../R/s01_i01_load_data.R"
-source(R0101)
-```
-
-```{r}
-cat(paste0("    CODE FILENAME: ", R0102))
-cat(paste(readLines(R0102), collapse="\n"),collapse = "\n")
+cat(paste0("    CODE FILENAME: ", R0201))
+cat(paste(readLines(R0201), collapse="\n"),collapse = "\n")
 ```
