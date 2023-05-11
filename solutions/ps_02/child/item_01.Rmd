@@ -69,10 +69,9 @@ cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 ## Density estimate
 
 Plot a density estimate of the data. In R, you can do this through the density function. Compare
-the results in parts (a), (b), and (c).  
+the results in parts 1.1, 1.2, and 1.3.  
 
-
-First, the percentile CI's covers areas in which the the bulk of statistics are seen. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI based on the mean. The mean is pulled to the right due to some extremely high values (104, 146). It could be observed that the percentile CI's are narrower than that of the bootstrap-t, and that the latter appears to cover areas of large concentration from both the mean and the median percentile CI's.
+First, the percentile CI's covers areas in which the the bulk of statistics are seen. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI based on the mean. Next, the mean is pulled to the right due to some extremely high values (104, 146). Finally, it could be observed that the percentile CI's are narrower than that of the bootstrap-t, and that the latter appears to cover areas of large concentration from both the mean and the median percentile CI's.
 
 ```{r}
 R01_05 <- "../R/01_05_density_plot.R"
