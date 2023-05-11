@@ -1,137 +1,81 @@
-```{r}
+```{r results = "hide"}
 R0201 <- "../R/02_01_load_data.R"
 source(R0201)
 ```
 
 ## Bootstrap percentile CI for $\theta_1$
 
-Compute a bootstrap percentile confidence interval for $\theta_1$. Interpret the CI.
+Compute a bootstrap percentile confidence interval for $\theta_1$.
 
 ```{r}
-B <- 2000
-theta_1_hat_star <- c()
-theta_2_hat_star <- c()
-plug_in_estimator <- function(A,B, est = "theta_1"){
-  if (est == "theta_1") {
-    return(log(mean(A/B)))
-  } else if (est == "theta_2") {
-    return(mean(log(A/B)))
-  }
-}
-
-n = dim(spatial_test_data)[1]
-set.seed(7)
-for (b in 1:B) {
-  bs_sample <- spatial_test_data[sample(spatial_test_data[,1], n, replace = TRUE),] 
-  theta_1_hat_star[b] <- plug_in_estimator(bs_sample$A,bs_sample$B, est = "theta_1")
-  theta_2_hat_star[b] <- plug_in_estimator(bs_sample$A,bs_sample$B, est = "theta_2")
-}
-
-bp1 <- c(quantile(theta_1_hat_star,.025),quantile(theta_1_hat_star,.975))
-bp2 <- c(quantile(theta_2_hat_star,.025),quantile(theta_2_hat_star,.975))
-bp1
+R02_02 <- "../R/02_02_percentile_logmean.R"
+source(R02_02)
 ```
+
+We are 95% confident that the true value of the median is between `r theta_1_pci[1]` and `r theta_1_pci[2]`.
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R02_02, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R02_02), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
 
 
 ## $BC_a$ CI for $\theta_1$
 
-Compute a $BCa$ confidence interval for $\theta_1$. Interpret the CI.
+Compute a $BC_a$ confidence interval for $\theta_1$. Interpret the CI.
 
 ```{r}
-plug_in_estimate_theta_1 <- plug_in_estimator(spatial_test_data$A, 
-                                              spatial_test_data$B, 
-                                              est = "theta_1")
-
-plug_in_estimate_theta_2 <- plug_in_estimator(spatial_test_data$A, 
-                                              spatial_test_data$B, 
-                                              est = "theta_2")
-
-bias_correction <- function(bootstrap_estimates, 
-                            plug_in_estimate, 
-                            B){
-  return(qnorm(sum(bootstrap_estimates < plug_in_estimate)/B))
-}
-
-acceleration_parameter <- function(data = spatial_test_data, 
-                                   est = "theta_1"){
-  for (i in n) {
-    summ <- ((sum(
-      plug_in_estimator(data$A[-i],
-                        data$B[-i],
-                        est = est))/n) - plug_in_estimator(data$A[-i], 
-                                                           data$B[-i], 
-                                                           est = est))
-    return(sum(summ^3) / (6*((sum(summ)^2))^(3/2)))
-  }
-}
-
-alpha <- function(confid = 0.95, 
-                  est = "theta_1",
-                  bootstrap_estimates = theta_1_hat_star,
-                  plug_in_estimate = plug_in_estimate_theta_1){
-  
-  bc <- bias_correction(bootstrap_estimates = bootstrap_estimates,
-                        plug_in_estimate = plug_in_estimate, 
-                        B = 2000)
-  
-  ap <- acceleration_parameter(data = spatial_test_data, 
-                               est = est)
-  
-  return(pnorm(bc + (bc + qnorm(confid))/(1-(ap*(bc + qnorm(confid))))))
-}
-
-BC_a <- function(confid = .95, 
-                 est = "theta_1",
-                 bootstrap_estimates = theta_1_hat_star,
-                 plug_in_estimate = plug_in_estimate_theta_1
-                 ){
-  return(c(quantile(bootstrap_estimates,
-                    alpha(1-confid, est = est, plug_in_estimate = plug_in_estimate)),
-           quantile(bootstrap_estimates,
-                    alpha(confid, est = est, plug_in_estimate = plug_in_estimate))))
-}
+R02_03 <- "../R/02_03_bca_logmean.R"
+source(R02_03)
 ```
 
+We are 95% confident that the true value of the median is between `r theta_1_BCa[1]` and `r theta_1_BCa[2]`.
 
 ```{r}
-th1 <- BC_a(confid = .95,
-            est = "theta_1",
-            bootstrap_estimates = theta_1_hat_star,
-            plug_in_estimate = plug_in_estimate_theta_1)
-
-th1
+cat(paste0("  CODE FILENAME: ", R02_03, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R02_03), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 ```
--0.06867057  0.16486927
 
 ## $BC_a$ CI for $\theta_2$
 
-Compute a $BC_a$ confidence interval for $\theta_2$. Interpret the CI.
+Compute a $BC_a$ confidence interval for $\theta_2$.
 
 ```{r}
-th2 <- BC_a(confid = .95,
-            est = "theta_2",
-            bootstrap_estimates = theta_2_hat_star,
-            plug_in_estimate = plug_in_estimate_theta_2)
 
-th2
 ```
+
+```{r}
+R02_05 <- "../R/02_05_bca_meanlog.R"
+source(R02_05)
+```
+
+We are 95% confident that the true value of the median is between `r theta_2_BCa[1]` and `r theta_2_BCa[2]`.
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R02_05, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R02_05), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
 
 
 ## Bootstrap percentile vs $BC_a$ CI for $\theta_1$
 
 Compare your CIs in 2.1 and 2.2. How different are the two CIs?
 
-The CI based on the $BC_a$ is narrower than that of the bootstrap percentile CI. Also, the endpoints of the former is shifted to the left. 
+The CI based on the $BC_a$ is narrower than that of the bootstrap percentile CI. Also, the endpoints of the former is shifted to the left.
 
 ```{r}
-hist(theta_1_hat_star,
-     main = expression(paste("Histogram of ", hat(theta)[1], "*")),
-     xlab = expression(paste(hat(theta)[1], "*")))
-abline(v=bp1[1],lty="dashed")
-abline(v=bp1[2],lty="dashed")
-abline(v=th1[1],lty="dotted")
-abline(v=th1[2],lty="dotted")
-text(th1[2]+0.015, 500, expression(BC[a]), cex=0.7)
-text(bp1[2]+0.035, 500, 'percentile', cex=0.7)
+R02_06 <- "../R/02_06_compare_ci.R"
+source(R02_06)
 ```
 
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R02_06, paste(rep("*",5), collapse = "")))
+cat(paste(readLines(R02_06), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```

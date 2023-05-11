@@ -15,7 +15,7 @@
     
     abline(v=quantile(lower,.025),col="violet")
     abline(v=quantile(upper,.975),col="violet")
-    text(quantile(upper,.975)-1, 0.06, expression(BC[a_mean]), cex=0.7)
+    text(quantile(upper,.975)-1, 0.06, expression(BS[tmean]), cex=0.7)
     
     text(140, 0.06, "median ---", cex=0.7)
     text(139.5, 0.055, "mean   ...", cex=0.7)

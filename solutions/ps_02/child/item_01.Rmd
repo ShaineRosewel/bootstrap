@@ -9,7 +9,7 @@ cat(paste(readLines(R01_01), collapse="\n"),collapse = "\n")
 cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 ```
 
-## bootstrap-t method: median
+## Bootstrap-t method: median
 
 Compute a 95% CI for $\theta$ using the bootstrap-$t$ method. Use $B_1 = 1000$ first-level bootstrap samples and $B_2 = 50$ second level bootstrap samples (to estimate the standard error).
 
@@ -30,7 +30,7 @@ cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 
 
 
-## bootstrap percentile CI: median
+## Bootstrap percentile CI: median
 
 Compute a 95% CI for $\theta$ using the bootstrap percentile CI with B = 1000 bootstrap samples.
 
@@ -48,7 +48,7 @@ cat(paste(readLines(R01_03), collapse="\n"),collapse = "\n")
 cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 ```
 
-## bootstrap percentile CI: mean
+## Bootstrap percentile CI: mean
 
 Compute a 95% confidence interval for the mean time between failures $\theta$ using the basic bootstrap method with B = 1000 bootstrap samples.
 
@@ -66,13 +66,13 @@ cat(paste(readLines(R01_04), collapse="\n"),collapse = "\n")
 cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 ```
 
-## density estimate
+## Density estimate
 
 Plot a density estimate of the data. In R, you can do this through the density function. Compare
 the results in parts (a), (b), and (c).  
 
 
-First, the percentile CI's focus on areas in which the data has a higher concentration. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI based on the mean. The mean is pulled to the right due to some extremely high values (104, 146). It could be observed that the percentile CI's are narrower than that of the bootstrap-t and that the latter appears to consider areas of large concentration from both the mean and the median percentile CI's.
+First, the percentile CI's covers areas in which the the bulk of statistics are seen. Because the data is skewed to the right and median is robust to outliers, percentile CI based on it can be seen to the left of the percentile CI based on the mean. The mean is pulled to the right due to some extremely high values (104, 146). It could be observed that the percentile CI's are narrower than that of the bootstrap-t, and that the latter appears to cover areas of large concentration from both the mean and the median percentile CI's.
 
 ```{r}
 R01_05 <- "../R/01_05_density_plot.R"
