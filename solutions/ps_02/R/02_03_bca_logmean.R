@@ -13,8 +13,8 @@
           plug_in_estimator(data$A[-i],
                             data$B[-i],
                             est = est))/n1) - plug_in_estimator(data$A[-i], 
-                                                               data$B[-i], 
-                                                               est = est))
+                                                                data$B[-i], 
+                                                                est = est))
         return(sum(summ^3) / (6*((sum(summ)^2))^(3/2)))
       }
     }
