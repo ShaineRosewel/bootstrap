@@ -89,7 +89,7 @@ and Stat 223/equiv. 3u.
             │   ├── 01_01_load_data.R
             │   ├── 01_02_bst_median.R
             │   ├── 01_03_percentile_median.R
-            │   ├── 01_04_percentile_mean.R
+            │   ├── 01_04_reversepercentile_mean.R
             │   ├── 01_05_density_plot.R
             │   ├── 02_01_load_data.R
             │   └── 02_06_compare_ci.R
