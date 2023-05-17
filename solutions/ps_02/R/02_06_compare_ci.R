@@ -10,8 +10,8 @@
     
     abline(v=theta_1_pci[1],lty="dashed")
     abline(v=theta_1_pci[2],lty="dashed")
-    text(theta_1_pci[2]+0.023, 6, expression(paste("%", ile)), cex=0.7)
+    text(theta_1_pci[2]+0.005, 6, expression(paste("%", ile)), cex=0.7)
     
     abline(v=theta_1_BCa[1],lty="dotted")
     abline(v=theta_1_BCa[2],lty="dotted")
-    text(theta_1_BCa[2]+0.01, 6, expression(BC[a]), cex=0.7)
+    text(theta_1_BCa[2]+0.005, 6, expression(BC[a]), cex=0.7)

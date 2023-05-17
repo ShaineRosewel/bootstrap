@@ -1,5 +1,5 @@
     # helper functions========================================================
-    
+
     bias_correction <- function(bootstrap_estimates, 
                                 plug_in_estimate, 
                                 B){
@@ -19,7 +19,7 @@
       }
     }
     
-    alpha <- function(confid = 0.95, 
+    alpha <- function(confid = .975, 
                       est = "theta_1",
                       bootstrap_estimates = theta_1_hat_star,
                       plug_in_estimate = plug_in_estimate_theta_1){
@@ -27,14 +27,14 @@
       bc <- bias_correction(bootstrap_estimates = bootstrap_estimates,
                             plug_in_estimate = plug_in_estimate, 
                             B = B)
-      
+
       ap <- acceleration_parameter(data = spatial_test_data, 
                                    est = est)
-      
+
       return(pnorm(bc + (bc + qnorm(confid))/(1-(ap*(bc + qnorm(confid))))))
     }
     
-    BC_a <- function(confid = .95, 
+    BC_a <- function(confid = .975, 
                      est = "theta_1",
                      bootstrap_estimates = theta_1_hat_star,
                      plug_in_estimate = plug_in_estimate_theta_1
@@ -53,9 +53,11 @@
                                                   spatial_test_data$B, 
                                                   est = "theta_1")
     
-    theta_1_BCa <- BC_a(confid = .95,
+    theta_1_BCa <- BC_a(confid = .975,
                         est = "theta_1",
                         bootstrap_estimates = theta_1_hat_star,
                         plug_in_estimate = plug_in_estimate_theta_1)
     
-    #theta_1_BCa
+    theta_1_BCa
+    #if bc & ap are 0: (-0.06867057, 0.16486927)
+    

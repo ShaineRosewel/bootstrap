@@ -25,4 +25,4 @@
     
     theta_1_pci <- c(quantile(theta_1_hat_star,.025),
                      quantile(theta_1_hat_star,.975))
-    #theta_1_pci
+    theta_1_pci

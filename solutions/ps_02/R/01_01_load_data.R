@@ -1,8 +1,8 @@
     survival_times <- c(10, 27, 30, 40, 46, 51, 52, 104, 146)
     sample_median <- median(survival_times)
+    sample_mean <- mean(survival_times)
     seed <- 7
-    B1 <- 1000
-    B2 <- 50
+    B1 <- 1000; B2 <- 50
     n <- 9
     
     bootstrap_fn <- function(estimate = "median", meth = "percentile") {
