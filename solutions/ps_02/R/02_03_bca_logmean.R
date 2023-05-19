@@ -8,16 +8,15 @@
     
     acceleration_parameter <- function(data = spatial_test_data, 
                                        est = "theta_1"){
-      for (i in n1) {
-        summ <- ((sum(
-          plug_in_estimator(data$A[-i],
-                            data$B[-i],
-                            est = est))/n1) - plug_in_estimator(data$A[-i], 
-                                                                data$B[-i], 
-                                                                est = est))
-        return(sum(summ^3) / (6*((sum(summ)^2))^(3/2)))
+      
+      th.jack <- sapply(1:n1, function(x){plug_in_estimator(data$A[-x],
+                                                              data$B[-x],
+                                                              est = est)})
+      
+      L <- mean(th.jack) - th.jack
+      
+      return( sum(L^3)/(6 * sum(L^2)^1.5) )
       }
-    }
     
     alpha <- function(confid = .975, 
                       est = "theta_1",
@@ -41,9 +40,11 @@
     ){
       return(c(quantile(bootstrap_estimates,
                         alpha(1-confid, est = est, 
+                              bootstrap_estimates = bootstrap_estimates,
                               plug_in_estimate = plug_in_estimate)),
                quantile(bootstrap_estimates,
                         alpha(confid, est = est, 
+                              bootstrap_estimates = bootstrap_estimates,
                               plug_in_estimate = plug_in_estimate))))
     }
     

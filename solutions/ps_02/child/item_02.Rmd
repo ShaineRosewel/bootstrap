@@ -66,7 +66,7 @@ cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
 
 Compare your CIs in 2.1 and 2.2. How different are the two CIs?
 
-The endpoints of the $BC_a$ CI are found to the left of the bootstrap percentile CI. The latter covers the bulk of the statistic while the former is adjusted towards the left.
+The endpoints of the $BC_a$ CI are found to the right of the bootstrap percentile CI but they are not hugely different. It is possible that the plug-in estimator is a little biased, resulting to that characteristic. Percentile CI works best if $\hat \theta_1$ is an unbiased estimator of $\theta_1$. In our case, we only have bootstrap resamples that are centered around the mean, `r mean(theta_1_hat_star)` which is also a little different from the original sample's plug-in estimate `r plug_in_estimate_theta_1`. $BC_a$ corrects for the bias.
 
 ```{r}
 R02_06 <- "../R/02_06_compare_ci.R"
