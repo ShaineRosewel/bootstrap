@@ -1,0 +1,421 @@
+---
+title: "Bootstrapping time series data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = 'center', fig.height = 4, fig.width = 6)
+```
+
+## Recall {.tabset}
+
+### Stages in univariate Box-Jenkins modeling
+
+1. Stage 0: preliminary stages - transform time series for stationarity (differencing for seasonality and log to make variance constant)
+2. Identification: use choose AR (PACF plot) and MA (ACF plot/ correlogram) terms
+3. Estimation: we typically use AR least squares but we will use AR - Yule-Walker equations
+4. Diagnostic checking: test for normality; if the error terms are now independent; constancy of variance
+
+### Weak stationarity
+
+- $E(x_t) = \mu, \ \forall t$
+- $V(x_t) = \sigma^2, \ \forall t$
+- $corr(x_t, x_{t-h})= \rho_h, \ \forall t, h$
+
+## Parameter estimation {.tabset}
+
+- Used to estimate the parameters of an $AR(p)$ model
+- Consider a **stationary** (weakly stationary unless otherwise specified)
+- model
+
+$$
+x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + \epsilon_t
+$$
+
+### OLS
+
+OLS: Common way of estimating parameters (AR coefficients)
+
+```{r}
+t <- 1:6
+X_t <- c(7,8,1,4,6,2)
+X_tminus1 <- c(NA,7,8,1,4,6)
+X_tminus2 <- c(NA,NA,7,8,1,4)
+
+data.frame(t,X_t, X_tminus1, X_tminus2)
+```
+
+Suppose we use $AR(2): x_t = \phi_0 + \phi_1 x_{t-1} + \phi_2 x_{t-2} + \epsilon_t$.
+
+When using OLS, take $x_t$ as $y$ and ($\mathbf{x_{t-1}}, \mathbf{x_{t-2}}$) as matrix $\mathbf X$. Estimate as your parameter vector: 
+
+$$
+\begin{bmatrix}
+\hat \phi_0 \\
+\hat \phi_1 \\
+\vdots  \\
+\hat \phi_2 
+\end{bmatrix} = (\mathbf X' \mathbf X)^{-1}\mathbf X'\mathbf y
+$$
+
+Estimating via OLS will not produce stable estimates. Properties are not optimal if you do OLS. (We will also have to exclude observations since we lose records with missing data. E.g. in the above example, we only use records from 3 to 6 for the model, those those that have complete data).
+
+
+### Yule-Walker equations {.tabset}
+
+Yule-Walker equations: better way of estimating parameters (AR coefficients)
+
+parameter:
+
+$$
+\gamma_j = cov(x_t, x_{t-j}), \ \forall t, j\\
+$$
+
+ESTIMATOR or corresponding statistic: 
+
+$$
+r_j = \hat \gamma_j = \frac{\sum^n_{t=j+1} (x_t-\bar x)(x_{t-j}-\bar x)}{n}, \ j = 1, 2, \dots, p \\
+$$
+
+e.g.,
+
+$$
+r_1=\hat \gamma_1 =\widehat {corr}(x_t, x_{t-1}) = \frac{\sum^n_{t=2} (x_t-\bar x)(x_{t-1}-\bar x)}{n}
+$$
+
+NOTE: dividing ${\sum^n_{t=j+1} (x_t-\bar x)(x_{t-j}-\bar x)}$ by ${n}$ assures that $\mathbf R$ is nonnegative definite matrix
+
+#### Toeplitz matrix $\mathbf R$
+
+- a symmetric matrix
+
+$$
+R = 
+\begin{bmatrix}
+1 & r_1 & r_2 & \cdots & r_{p-2} & r_{p-1} \\
+  & 1 & r_1 & \cdots & r_{p-3} & r_{p-2} \\
+ &  & 1 & \cdots & r_{p-4} & r_{p-3} \\
+ &  &  & \ddots & \vdots & \vdots\\
+ &  &  &  & 1 & r_1 \\
+  &  &  &  & & r-1 \\
+\end{bmatrix}
+$$
+
+
+#### Coefficients of AR process
+
+$$
+\Phi_{p \times 1} = \begin{bmatrix}
+ \phi_0 \\
+ \phi_1 \\
+\vdots  \\
+ \phi_p
+\end{bmatrix}
+$$
+
+
+#### vector r
+
+$$
+\mathbf r_{p \times 1} = \begin{bmatrix}
+ r_0 \\
+ r_1 \\
+\vdots  \\
+ r_{p-1} \\
+ r_p
+\end{bmatrix}
+$$
+
+#### Yule-walker estimator $ \hat \Phi$
+
+Yule-walker estimator of $\phi_1, \dots, \phi_p$
+
+$$
+R\Phi = \mathbf r \rightarrow \hat \Phi = R^{-1} \mathbf r
+$$
+
+
+## Model-based bootstrap and residuals {.tabset}
+
+- for time series applications of bootstrap, the sample may be identically distributed but typically serially correlated $\{x_0\}=x_1, x_2, \dots$  
+- if the data satisfy a model with iid error terms, the model-based bootstrap can still be derived by resampling the residuals, analogous to the linear regression paradigm
+- here, we are assuming a model (commonly, AR structure)
+
+
+### Bootstrapping an $AR(1)$ model
+
+Let $\{x_1, \dots x_n\}$ correspond to a stationary $AR(1)$ process 
+
+$$
+x_t = \phi_1x_{t-1} + \epsilon_t, \quad \epsilon_t \overset {iid} \sim G \ w/\  mean = 0)
+$$
+
+GOAL: estimate the CDF of empirical distribution function of the estimator (random variable), 
+
+$$
+\hat \phi_1 - \phi_1
+$$
+
+Knowing its CDF allows us to compute the below probability
+
+$$
+P(q_1< \hat \phi_1 - \phi_1 < q_2) \\
+P(q_1 + \phi_1 < \hat \phi_1< q_2 + \phi_1 ), \quad \text{CI for } \phi_1
+$$
+
+where $\hat \phi_1$ is the Yule-Walker estimator
+
+- Compute the residuals and center them afterwards. There is a need to center since $\hat phi_1$ is calculated via YW equations and not OLS. When using OLS, we know that $\sum e_t = 0$. This is NOT true when using YW equations.
+
+$$
+e_t = x_t - \hat \phi_1x_{t-1}, \quad t = 2, 3, \dots, n
+$$
+- centering process
+
+$$
+e'_t = e_t - \bar e
+$$
+
+- empirical $\mathcal G$ by $\hat {\mathcal G}$ (Empirical distribution function of centered residuals). See algo below:
+
+Algorithm: Model based bootstrap to estimate CDF of $\hat \phi_1 - \phi_1$
+
+1. For a large integer $M$ (# of boot samples), sample
+ $$
+ b = 1, \quad \{\epsilon^{*(1)}_1, \dots, \epsilon^{*(1)}_n\} \overset {SRSWR}\longrightarrow  \{e'_1. \dots, e'_n\} \\
+ b = 2, \quad \{\epsilon^{*(2)}_1, \dots, \epsilon^{*(2)}_n\} \overset {SRSWR}\longrightarrow  \{e'_1. \dots, e'_n\} \\
+ \vdots \\
+ b = M, \quad \{\epsilon^{*(M)}_1, \dots, \epsilon^{*(M)}_n\} \overset {SRSWR}\longrightarrow  \{e'_1. \dots, e'_n\} \\ 
+ $$
+We can now reconstruct our time series model using the $AR(1)$. (very similar approach to regression)
+
+2. For fixed boot sample $j = 1, 2, \dots, M$, 
+
+ $$
+ x^{*(j)}_t = \hat \phi_1 x_{t-1}^{*(j)} +  e_t^{*(j)}
+ $$
+ 
+ for $t = 1, \dots, n$, use the YW equations to obtain YW estimator $\hat \phi_1^{*(j)}$ from each j bootstrap sample.
+ 
+ $$
+ \{x_1^{*(j)}, \dots, x_n^{*(j)}\} \rightarrow \hat \phi_1^{*(j)}
+ $$ 
+ 
+3. Estimate of the CDF $\hat \phi_1 - \phi_1$. This is the empirical CDF
+ 
+ $$
+ \hat p(\hat \phi_1 - \phi_1 \leq x) = \frac{\#\left\{  \hat \phi_1^{*(j)} - \hat \phi_1 \leq x\right\}}{M}
+ $$
+ 
+
+Remarks:
+- Problem in doing the recursion in Step 2: you need to start somewhere before the recursion could even occur. Note that we cannot start from $t = 1$ since that will require us to identify $x_{t-1}^{*(j)} = x_0^{*(j)}$ which we do not have. We need to have an initial value. How do we get $x_0^{*(j)}$  
+- In order to run the recursion in step 2, a starting value $x_0^{*(j)}$ should be chosen.  
+  - Option 1: draw $x_0^{*(j)}$ at random from $\{x_1, \dots x_n\}$  
+  - Option 2: use a burn-in period - Let m be a large positive integer and set $x_{-m}^{*(j)}=0$ (or some arbitrary number). Note that $\epsilon^{*(j)}_{-m+1}$ is picked at random from $\{e_1', \dots, e'_n\}$  
+  
+  $$
+  x^{*(j)}_{-m+1} = \hat \phi_1 x^{*(j)}_{-m} + \epsilon^{*(j)}_{-m+1}
+  $$
+  
+  From the above, we obtain 
+  
+  $$
+  x^{*(j)}_{-m} \quad x^{*(j)}_{-m+1} \quad x^{*(j)}_{-m+2} \quad \dots \quad x^{*(j)}_0 \quad x^{*(j)}_1 \quad \dots \quad x^{*(j)}_n
+  $$
+  
+  Note here that m should be a large number. We then truncate that by deleting
+  
+  $$
+  x^{*(j)}_{-m} \quad x^{*(j)}_{-m+1} \quad x^{*(j)}_{-m+2}\quad \dots \quad x^{*(j)}_0
+  $$
+  
+  an retaining only
+  
+  $$
+  x^{*(j)}_1 \quad \dots \quad x^{*(j)}_n
+  $$
+  
+  The point is that this process is initializing. So that what we get ($x^{*(j)}_1 \quad \dots \quad x^{*(j)}_n$) is guaranteed to come from an AR(1) process. This is because in the beginning of the series, the variability is very high (unstable) and so it stabilizes at a later time, this is also the part where the AR(1) is the true process. What makes it stable later on is the fact that we are multiplying $\hat \phi_1$
+  
+  The unstable part that we are removing is the burn-in period (series just initializes here.)
+  
+  This now solve the problem in step 2.
+  
+  Notes:  
+    - We discard all but the final n values  
+    - this amounts to simulating the AR(1) with a burn-in period.  
+  
+
+### Bootstrapping an $AR(p)$ model
+
+Let $\{x_1, \dots x_n\}$ correspond to a stationary $AR(1)$ process 
+  
+$$
+x_t = \phi_1x_{t-1} + \dots + \phi_p x_{t-p}+\epsilon_t, \quad \epsilon_t \overset {iid} \sim G \ w/\  mean = 0)
+$$
+
+
+
+
+
+Algorithm: Model based bootstrap to estimate CDF of $\hat \phi_k - \phi_k$ (this k can be any integer in $\{1, \dots, p\})$
+
+1. Compute the residuals. Note that $\hat \phi_1, \dots \hat \phi_p$ are YW estimator.  
+
+  $$
+  e_t = x_t - \hat \phi_1x_{t-1} - \dots - \hat \phi_px_{t-p}, \quad t = 2, 3, \dots, n
+  $$
+
+2. Center the residuals using $e' = e_t - \bar e$, to obtain $e'_1, \dots, e'_n$. This is then the empirical distribution given by $\hat {\mathcal G}$. Sample from $\hat {\mathcal G}$ WR
+
+3. For a large integer $M$ (# of boot samples), sample
+ $$
+ b = 1, \quad \{\epsilon^{*(1)}_1, \dots, \epsilon^{*(1)}_n\} \overset {SRSWR}\longrightarrow  \{e'_1. \dots, e'_n\} \\
+ b = 2, \quad \{\epsilon^{*(2)}_1, \dots, \epsilon^{*(2)}_n\} \overset {SRSWR}\longrightarrow  \{e'_1. \dots, e'_n\} \\
+ \vdots \\
+ b = M, \quad \{\epsilon^{*(M)}_1, \dots, \epsilon^{*(M)}_n\} \overset {SRSWR}\longrightarrow  \{e'_1. \dots, e'_n\} \\ 
+ $$
+ 
+4. Fix $j$ and use the recursive equation
+ 
+ $$
+ x_t^{*(j)} = \sum_{k=1}^p \hat \phi_kx_{t-k}^{*(j)} + \epsilon_t^{*(j)}
+ $$
+ 
+ for $t = 1, 2, \dots, n$ to generate autoregressive data $\left\{x^{*(j)}_1 \quad \dots \quad x^{*(j)}_n\right\}$ for jth boostrap sample. Estimate $\hat \phi_k^*$ for $k \in \{1, \dots, p\}$
+ 
+5. Estimated CDF of $\hat P(\hat \phi_k - \phi_k)$
+
+ $$
+ \hat p(\hat \phi_k - \phi_k \leq x) = \frac{\#\left\{  \hat \phi_k^{*(j)} - \hat \phi_k \leq x\right\}}{M}
+ $$
+Note: We require p initial values for the recursion in step 2. This can be accomplished in 
+
+1. an arbitrary fashion and then using a burn-period (preferred)  
+2. choose $\left\{ x_{-p+1}^{*(j)}, \dots, x_0^{*(j)} \right\}$ as a stretch of p randomly chosen CONSECUTIVE VALUES from the original data, $\left\{ x_1, \dots, x_n} \right\}$ (this is to keep the AR process)  
+
+### Boostrapping a nonlinear regression
+
+Let $\mathcal H$ be any nonlinear function
+
+$$
+x_t = \mathcal H(x_{t-1}, \dots, x_{t-p}) + \epsilon_t \\
+\rightarrow e_t = x_t - \hat {\mathcal H}(x_{t-1}, \dots, x_{t-p})
+$$
+Sample WR from $\{e'_1, \dots, e'_n\}, e'_t = e_t - \bar e$
+
+$$
+\rightarrow x_t^{*(j)} = \hat {\mathcal H}(x_{t-1}^{*(j)}, \dots, x_{t-p}^{*(j)}) + \epsilon_t^{*(j)}
+$$
+
+The discussion on choosing the p initial values is the same as in bootstrapping an AR(p) model
+
+### R example
+
+```{r}
+library(tseries)
+setwd("C:/Users/mcluc/Desktop/PENDING/STAT 252/4_DATASETS")
+mau <- read.table("mauna.dat",header=T,sep='')
+mau <- ts(mau,start=1958,frequency=12) # frequency=12 means lag 1 in PACF means you have 1 seasons (contains 12 time points)
+plot(mau)
+```
+
+```{r}
+#Transforming the mau series, lag 12 - seasonal differencing, log for constant variance
+mau.gr <- 1000*diff(log(mau),lag=12) # can be interpreted as growth rate
+plot(mau.gr) # seems may trend pa but passed the next test
+```
+
+```{r}
+adf.test(mau.gr) # reject h0
+```
+
+Plot easily goes down to 0
+
+```{r}
+plot(acf(mau.gr)) # damping to 0 now
+```
+
+Prominent spike at lag 1 which equates to an entire season, specified as `frequency = 12` in the model above. Hence in the image, lag 1 is just lag 12. 
+
+```{r}
+plot(pacf(mau.gr)) # model AR(12)
+```
+
+```{r}
+# values that we see in the acf plot
+rho.hat <- acf(mau.gr,lag = 12,type='correlation',plot=F)$acf[,,1]
+
+mau.acf12 <- rho.hat[13]
+p.order <- 12
+phi.ar <- solve(toeplitz(rho.hat[1:p.order])) %*% rho.hat[2:(p.order+1)] #YW Walker estimator to phi; R^(-I)r
+```
+
+
+## Sieve Bootstraps
+
+Suppose that a model $\Pi$ is available to describe underlying probabilistic structure, but involving infinitely many parameters
+
+
+The idea of a sieve is the creation of a sequence of models, $\left\{\Pi_j\right\} = \Pi_1, \Pi_2, \Pi_3 \dots \rightarrow j$ unknown parameters, satisfying the ff requirements:
+
+1. the models are nested - i.e. model $\Pi_i$ is a restriction of $\Pi_j$ where $i<j$ - one is more complicated than the previous due to more number of parameters
+   e.g. Here, AR(1) ($\Pi_1$) is a restriction of AR(2) ($\Pi_2$)
+   $$
+   x_t = \phi_1 x_{t-1} + \epsilon_t, \quad AR(1)\\
+   x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \epsilon_t, \quad AR(2)\\
+   $$
+
+
+2. The limiting model is $\Pi$, the real model of our process.
+   $$
+   \lim_{j \rightarrow \infty} \Pi_j = \Pi
+   $$
+   
+* Practical application of the method of sieves is to use the sample $\{x_1, \dots, x_n\}$ to fit the model $\Pi_m$ where m is reasonably large and approximates $\Pi$ well.  
+* Important: If we were to have a different sample size $n'$ (where $n'>n$) e.g. we receive new data with a publication release, then new could fit a model with m' ($m'>m$) parameters (i.e., model is dependent on sample size.)  
+
+* The method of sieves involves a sequence of approximating models in which the approximation as well as parameter estimation improves as n increases.
+
+## Autoregressive sieve and AR sieve bootstrap
+
+* suppose $AR(\infty)$ model holds true  
+* data: $\{x_1, \dots, x_n\}$: impossible to estimate all infinitely many parameters  
+* nevertheless we may use an AR(p) model where p is 1) sufficiently large 2) required to grow as n increases 3) may be selected by PACF  
+* the order p might be selected in a data-driven way (e.g.,  through PACF plot)  
+* in any case since the true AR order is infinite, it is important to have a method of choosing p that allows it to grow unbounded as n increases.  
+* the fact that p (order) is required to grow with n makes it a AR sieve bootstrap (model has to grow with the sample size)  
+* AR(p) (p grows with n) applied to the data $\{x_1, \dots, x_n\}$, the model-based bootstrap for AR(p) applies verbatim.
+
+Algorithm: AR Sieve bootstrap to estimate $\widehat{corr}(x_t, x_{t-12})=\hat \rho(12) - \rho(12)$
+ 
+Let $\{x_1, \dots x_n\}$ be data, suppose we have an AR(12) model
+
+1. Fit the AR(12) model using YW to estimate $\phi_1, \dots, \phi_{12}$. Note that the order (p = 12) is chosen as a function of n.  
+2. Get residuals
+
+  $$ 
+  e_t = x_t \sum_{k = 1}^{12}\hat\phi_k x_{t-1}, \quad t = p+1, p+2, \dots, n
+  $$
+  
+3. Center the residuals  
+
+  $$
+  e'_t = e_t - \bar e, \quad t = p+1, p+2, \dots, n
+  $$
+  
+4. Let $\hat {\mathcal G}$ be the empirical distribution function of $e'_t$s. For fixed j,   
+    a) sample ${\epsilon_1^{*(j)}, \dots, \epsilon_n^{*(j)}} \overset {iid} \sim \hat {\mathcal G}$  - all SRSWR since there is no distributional assumption on $\hat {\mathcal G}$, it is just the empirical distribution. 
+    b) Solve the recursive equation  $x_t^{*(j)} = \sum^p_{k=1} \hat \phi_k x_{t-k}^{*(j)} + \epsilon_t^{*(j)}, \quad t = 1, \dots, n$. Note: We need p initial values. Proceed similar to previous section.
+    c) Compute (note: we use n to ensure nonnegative correlation matrix)
+    $$
+    \hat \rho_j^*(12) = \frac{covarariance}{prod \ of \ variances} = \frac{\frac{1}{n}\sum_{t = p+1}^n\left(x_t^* - \bar {x^*} \right)\left(x_{t-p}^* - \bar {x^*}\right)}{\sqrt{\frac{\left(x_t^* - \bar {x^*} \right)^2}{n}}\sqrt{\frac{\left(x_{t-p}^* - \bar {x^*} \right)^2}{n}}} 
+    $$
+    
+    
+5. The empirical CDF of $\hat \rho(12) - \rho(12)$ is estimated by
+
+$$
+\hat P(\hat \rho(12) - \rho(12) \leq x) = \frac{\#\left\{  \hat \rho_j^*(12) - \hat \rho(12) \leq x\right\}}{M}
+$$

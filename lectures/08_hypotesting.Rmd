@@ -1,0 +1,213 @@
+---
+title: "Hypothesis testing: Bootstrap test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = 'center', fig.height = 4, fig.width = 6)
+```
+
+Algo: Computation of the bootstrap to test $H_0: F = G$ at level $\alpha$
+
+1. Draw B samples of size n+m WR from $\mathbf x_{N \times 1} = [\mathbf z, \mathbf y]$. (Note that we are sampling from the empirical CDF under $H-0$, we combine $\mathbf z$ and $\mathbf y$) and do SRSWOR).  
+2. Compute the test statistic, $T(\mathbf x^*_b) = \bar z^*_b - \bar y^*_b,\ b = 1, \dots, B$.  
+3. Approximate $ASL_{boot}$ with $\widehat{ASL}_{boot} = \frac{ \# \{ |T(x^*_b)| \geq |T(x)| \}}{B}$ where $B = n^n$, whenever feasible (else, choose a smaller value). Reject $H_0$ if $\widehat{ASL}_{boot} \leq \alpha$
+
+Remarks:
+
+1. The permutation test is exact for testing $H_0: F = G$ and the bootstrap test is just approximate.  
+2. The permutation test exploits the symmetry under $H_0: F=G$ (permutation lemma; does NOT estimate the common distribution). The bootstrap ESTIMATES THE COMMON, EMPIRICAL DISTRIBUTION and samples from it.  
+3. In permutation tests, we can use a different test statistic. For instance, we can use $T(\mathbf x) = \frac{\bar x - \bar y}{\sqrt {s^2_p \left(\frac{1}{n}+\frac{1}{m}\right)}}$, where $s^2_p = \frac{(n-1)s_z^2+(m-1)s^2_y}{n+m-2}$ (if variances are equal to each other which is TRUE). Under $H_0: F=G$, so we can assume equal variances ($V_F = V_G$). The permutation won't change. But the bootstrap test result may change. The difference is quite small.
+4. Without assuming normality, suppose we test equality of means (testing for parameter value: bootstrap; equality of distribution: permutation) $H_0: \mu_z = \mu_y$ vs $H_a: \mu_z \neq \mu_y$, we can use:  
+
+- $T(\mathbf x) = \frac{\bar x - \bar y}{\sqrt {s^2_p \left(\frac{1}{n}+\frac{1}{m}\right)}}$ (makes sense now to make a distinction between the 2 variances since we do NOT have a hypothesis on equality of distributions) if $\sigma^2_F = \sigma^2_G$. NOTE: Only use sample variance $s^2_p$ if you are assuming that population variances are equal ($\sigma^2_F = \sigma^2_G$) because what the assumption does is that it combines the two sample variances into just one. We do not pool them if they are different! It does not make sense to pool them if the populations are not the same.  
+- $T(\mathbf x) = \frac{\bar x - \bar y}{\sqrt { \left(\frac{s^2_z}{n}+\frac{s^2_y}{m}\right)}}$ if we are NOT willing to assume $\sigma^2_F = \sigma^2_G$.  
+
+4. E&T: In considering the bootstrap hypothesis test for comparing two means, there is often no compelling reason to assume equal variance, hence we do NOT make that assumption.
+
+
+Problem: Normality is NOT assumed $H_0: \mu_z = \mu_y$ vs $H_1: \mu_z \neq \mu_y$ we use bootstrap test, everything (eg computation of test statistic) has to be done under the null hypothesis. 
+
+We need to do something first with our data before we proceed.
+
+Since we need the null distribution (dist under null hypothesis) of our test statistic, we need estimates of F and G that use only the assumption of a common mean. (z and y can have different distributions - ex z has normal and y has exponential poisson - but their means are equal).
+
+If $(z_1, \dots \z_n, y_1, \dots \y_m)$. Suppose $E(z_i) = E(y_j) = \mu \ \forall i, j$ (true under $H_0$), then the test statistic should reflect that. We combine the means into a common mean OR the mean of the the combined sample.
+
+$$
+\bar x = \frac{\sum^n_{i=1}z_i + \sum^m_{j=1}y_j}{n+m}
+$$
+
+Translate your sample so that they have a common mean.
+
+Algo: Computation of the bootstrap test statistic for testing the equality of means $H_0: \mu_z = \mu_y$ vs $H_1: \mu_z \neq \mu_y$ when equality of variances is NOT assumed.
+
+1. Translate sample data. Instead of $z_i$, work with $\tilde z_i = z_i - \bar z + \bar x$ and $\tilde y_i = y_i - \bar y + \bar x$ where $\bar x = \frac{\sum^n_{i=1}z_i + \sum^m_{j=1}y_j}{n+m}$
+
+Aside: 
+
+$$
+\frac{1}{n}\sum\left(\tilde z_i\right) = \frac{1}{n} \sum\left(z_i - \bar z + \bar x\right) \\
+\frac{1}{n}\sum \tilde z_i = \frac{1}{n}\sum\left(z_i - \bar z \right) + \frac{1}{n}\sum \bar x \\
+\frac{1}{n}\sum \tilde z_i =0 + \frac{1}{n}\sum \bar x \\
+\frac{1}{n}\sum \tilde z_i = \frac{n \bar x}{n} \\
+\frac{1}{n}\sum \tilde z_i = \bar x \\
+\frac{1}{m}\sum \tilde y_j = \bar x
+$$
+
+$\sum(z_i - \bar z)$: deviations from the mean so sums up to 0
+
+It is shown that we reflect the fact that under the null hypothesis, the means are equal to each other. They now have the same sample mean, $\bar x$.
+
+NOTE: We won't be sampling from the original data, we have to translate first.
+
+2. Sample WR from the translated data $\mathbf z^*_{b_,n \times 1}, b = 1, \dots, B$ from $\{\tilde z_1, \dots \tilde z_n\}$. Sample WR from the translated data $\mathbf y_{b_,m \times 1}$ from $\{\tilde y_1, \dots \tilde y_n\}$. NO assumption of similar distribution so we sample SEPARATELY.  
+
+3. Compute $T(\mathbf z_b^*, \mathbf y_b^*) = \frac{ \bar {\mathbf z_b^*} - \bar {\mathbf y_b^*}}{\sqrt { \left(\frac{s^{2*}_{zb}}{n}+\frac{s^{2*}_{yb}}{m}\right)}}$ where  
+  - $\bar {\mathbf z_b^*}$: sample mean of elts inside $\mathbf z_b^*$  
+  - $\bar {\mathbf y_b^*}$: sample mean of elts inside $\mathbf y_b^*$
+  - $s^{2*}_{zb}$: sample variance of elts inside $\mathbf z_b^*$ 
+  - $s^{2*}_{yb}$: sample variance of elts inside $\mathbf y_b^*$  
+  
+4. Approximate $ASL_{boot}$ (approximating only- ie using B not, $n^n$)
+
+$$
+\widehat{ASL}_{boot} = \frac{ \# \{ |T(\mathbf z^*_b, \mathbf y^*_b)| \geq |t_{obs}| \}}{B} \\
+t_{obs} = \frac{ \bar z - \bar y}{\sqrt { \left(\frac{s^2_z}{n}+\frac{s^2_y}{m}\right)}}
+$$
+
+Variablity remains the same if you just added a constant to each of the observations. Hence, the case of which data to use - tilde or the original version, does not matter. (ie: using $z_i$ or $z_i - \bar z + \bar x$ to compute $t_{obs}$ does not matter)
+
+Reject $H_0$ if $\widehat{ASL}_{boot} \leq \alpha$
+
+## One sample problem
+
+- Data: $z_1, \dots, z_n$
+
+- Suppose that we want to test 
+
+$$
+H_0: \mu = \mu_0$ \\
+$H_1: \mu \neq \mu_0
+$$ 
+
+and we do NOT want to assume normality.
+
+- The bootstrap test can be used. We can base the bs hypothesis test on
+
+$$
+t = \frac{\bar z - \mu_0}{\frac{s_z}{\sqrt n}}
+$$
+
+- We need a distribution $\hat F$ that estimates the true $F$ under $H_0$  
+
+- The empirical CDF based on $\{z_1, \dots z_n\}'$ is not appropriate for it does NOT obey $H_0$. We want that $\frac{1}{n}\sum^n_{i =1}z_i = \mu_0$. To follow these, we should translate.
+
+- We need to obtain an estimate of $F$ that has mean $\mu_0$. A simple way is to translate the empirical CDF $\hat F$ so that it has the desired mean
+
+$$
+z_i \rightarrow \tilde z_i = z_i -\bar z + \mu_0; i = 1, \dots, n
+$$
+
+Aside:
+
+$$
+\frac{1}{n}\sum\left(\tilde z_i\right) = \frac{1}{n} \sum\left(z_i - \bar z + \mu_0\right) \\
+\frac{1}{n}\sum \tilde z_i = \frac{1}{n}\sum\left(z_i - \bar z \right) + \frac{1}{n}\sum \mu_0 \\
+\frac{1}{n}\sum \tilde z_i =0 + \frac{1}{n}\sum \bar x \\
+\frac{1}{n}\sum \tilde z_i = \frac{n \mu_0}{n} \\
+\frac{1}{n}\sum \tilde z_i = \mu_0 \\
+\frac{1}{m}\sum \tilde y_j = \mu_0
+$$
+
+
+Algo: Bootstrap test for $H_0: \mu = \mu_0$ vs $H_1: \mu \neq \mu_0$ when normality is NOT assumed
+
+1. Compute $\tilde z_i = z_i - \bar z + \mu_0, i = 1, \dots, n$  
+2. Sample $\tilde z^*_b, b = 1, \dots B$ where each $\tilde z^*_b$ consists of a sample of size n from $(\tilde z^*_1, \dots, \tilde z^*_n)$  
+3. compute
+
+$$
+t_b^* = \frac{\bar {\tilde z^*_b} - \mu_0}{\frac{\tilde {s}^*_z}{\sqrt n}}
+$$
+
+where $\bar {\tilde z^*_b}$ is the sample mean of elements in $\mathbf z^*_{b, n\times 1}$ and $\tilde s^*_b$ is the sample SD of elements in $\mathbf z^*_{b, n\times 1}$
+
+4. Approximate $ASL_{boot}$ (approximating only- ie using B not, $n^n$)
+
+$$
+\widehat{ASL}_{boot} = \frac{ \# \{ |t^*_b| \geq |t_{obs}| \}}{B} \\
+t_{obs} = \frac{ \bar z - \mu_0}{\sqrt { \left(\frac{s^2_z}{n}+\frac{s^2_y}{m}\right)}}
+$$
+
+Reject $H_0$ if $\widehat{ASL}_{boot} \leq \alpha$
+
+## Exercise
+
+$$
+H_0: \mu_D = d_0 \\
+H_1: \mu_D \neq d_0 \\
+\\
+\mu_D = \mu_z-\mu_y
+$$
+
+Data: $(z_1, y_1), \dots, (z_n, y_n) \rightarrow d_i = z_i - y_i, \quad \{d_1, \dots, d_n\}$
+
+## Discussion
+
+1. the two quantities that we must choose when carrying out a bootstrap hypothesis test are
+  - test statistic ($T(\mathbf x)$; eg $\bar z- \bar y$, $\frac{\bar z- \bar y}{\sqrt{\frac{s_z^2}{n}+\frac{s_y^2}{m}}}$)
+  - null distribution $\hat {F_0}$, translate the data so it follows the specification in the null hypothesis
+2. Given these, we generate B bootstrap samples, compute $T(\mathbf x_b^*), b = 1, \dots, B$ under $\hat {F_0}$ and estimate
+
+$$
+\widehat{ASL}_{boot} = \frac{ \# \{ |t^*_b| \geq |t_{obs}| \}}{B} \\
+$$
+
+p-value for one-sided (assuming $t_{obs} > 0$):
+
+$$
+H_0: \mu_z = \mu_y \\
+H_1: \mu_z > \mu_y \\
+\widehat{ASL}_{boot} = \frac{ \# \{ t^*_b > t_{obs} \}}{B} \text{ (follows directions of H1)} \\
+$$
+
+## Example
+
+Let us compare the running times (in minutes) of films produced by two motion picture companies. We test the null hypothesis that the average running times of the two companies are equal, against a two-sided alternative that the films have different average running times.
+
+```{r}
+z <- c(103, 94, 110, 87, 98) #Company A
+y <- c(97, 82, 123, 92, 175, 88, 118) #Company B
+plot(density(z), xlim=c(40,150), col='red')
+lines(density(y))
+z.bar <- mean(z); y.bar <- mean(y)
+s.z <- sd(z); s.y <- sd(y)
+```
+<br /> 
+The plots of the fitted densities show some evidence that the means are not equal. Moreover, the variances are clearly not equal. There is no evidence of normality either. We now take a look at the summary statistics
+
+The sample mean running time of films produced by company A is `r z.bar` while that of company B is `r y.bar`. Moreover the sample standard deviations are `r s.z` and `r s.y` for company A and B, respectively.
+
+```{r}
+set.seed(0)
+n = length(z); m=length(y)
+x.bar <- (sum(z) + sum(y)) / (n + m)
+z.tilde = z - mean(z) + x.bar
+y.tilde = y - mean(y) + x.bar
+B = 500
+t.obs <- (mean(z) - mean(y))/sqrt(var(z)/n + var(y)/m)
+
+indicator <- c() #1 if the statement is TRUE, 0 if FALSE
+for(b in 1:B){
+  z.tilde.star <- sample(z.tilde, n, replace=T)
+  y.tilde.star <- sample(y.tilde, m, replace=T)
+  denominator <- sqrt(var(z.tilde.star)/n + var(y.tilde.star)/m)
+  t.b <- (mean(z.tilde.star) - mean(y.tilde.star))/denominator
+  indicator[b] <-   abs(t.b) >= abs(t.obs)
+}
+print(sum(indicator)/B) #achieved significance level / p-value
+```
+Therefore, we have no sufficient evidence to conclude that the average running times of the two film companies are different.
+
+

@@ -1,0 +1,160 @@
+---
+title: "Hypothesis testing: Permutation test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.align = 'center', fig.height = 4, fig.width = 6)
+```
+
+## Permutation test
+
+Permutation test: testing equality of distributions
+
+- Let $F$ be a distribution producing a sample, $\mathbf z = (z_1, \dots, z_n)'$; $G \rightarrow \mathbf y = (y_1, \dots, y_m)$.  
+- We test $H_0: F = G; H_a = F \neq G$, 2 sided alternative for simplicity (also possible: values of one dist $F$ are greater than values of $G$  - aka stochastic dominance)  
+- T&E: p-value = ASL (achieved significance level) = $P(|\hat \theta| \geq |\hat \theta_{obs}|) \rightarrow$ reject $H_o$ if p-value is small. This may be difficult to comput is we do not know the distribution of $\hat theta$ under $H_o$ or if distribution depends on unknown parameters:  
+- Aside: If we are testing this case: testing $H_0: \mu = \mu_0 $
+
+
+$$
+X_1, \dots X_n \overset {iid} \sim N(\mu, \sigma^2) \\
+H_0: \mu = \mu_0 \\
+H_1: \mu \neq \mu_0 \\
+\text{Take as statistic and its distribution is known under Ho: } z = \frac{\bar x - \mu_0}{\frac{\sigma}{\sqrt n}} \sim N(0,1) \\
+\text{Hence, we can easily calculate z-value: } P(|Z| > |z_{obs}|)
+$$
+
+$$
+H_0: F = G \\
+H_1: F \neq G 
+$$
+
+
+- In general, there are $N_gn = \frac{N!}{n!(N-n)!}$ possible $\mathbf \ g (z,z,z,y,y)$ vectors corresponding to all possible ways of partitioning N elements into 2 subsets of size n and m  
+- permutation lemma: under $H_0: F=G$, each vector has probability$\frac{1}{N_gn}$. That is, all permutations of $\mathbf z$'s and $\mathbf y$'s are equally likely if $F=G$
+- Let $\mathbf g^*$ be any of $N_gn$ possible values, e.g., $\mathbf g^* = (z,z,y,z,y)$ and let $\hat \theta^*$ be out test stat corresponding to $\mathbf g^*$, the distribution of all possible values of $\hat \theta^*$ is called the permutation distribution. 
+- the permutation ASL, $P(|\hat \theta^*| \geq |\hat \theta|) = \frac{ \{ |\hat \theta^*| \geq |\hat \theta| \}}{N_gn}$, is thought of as estimate of the p-value $P(|\hat \theta| \geq |\hat \theta_{obs}|)$ but we do not know the distribution of $\hat \theta_{obs}$ under the null hypothesis so we approximate base on permutations (just an empirical estimate).
+- do NOT do permutation test if you are assuming normality. If you are assuming normality and are testing whether $F = G$ then it is just equivalent to testing the parameters are equal to each other.
+- fully nonparametric procedure
+
+**Remarks:**
+- permutation algo is similar to bootstrap algo, the only difference is sampling is done WOR in permutation algo.  
+- in practice $N_gn$ may be too large so we just get subsets of this.This is analogous to the bootstrap where we get a subset of $n^n$ possible nonparametric bootstrap samples. (ex: n = 10, $10^{10} = 10 000 000 000$, we can take for instance only $B=1000$)
+- permutation tests are accurate. The type 1 error rate is almost exactly controlled $P(\text{reject }H_0 | H_0 \text{ is true}) = \alpha$  
+- the permutation test can be applied to other test statistics e.g. $\frac{\hat \sigma^2_z}{\hat \sigma^2_y}$, $\frac{\bar z - \bar y}{\sqrt{\frac{s^2_z}{n}+\frac{s^2_y}{m}}}$  
+- can it be applied to binary discrete data? (in principle, yes as long as you can find a suitable test statistic)  
+- the bootstrap ASL test $H_0: \theta = \theta_0$ while permutation ASL tests $H_0: F=G$  
+- the standard deviation of the permutation distribution is not a dependable estimate of the standard error of $\hat theta$ since we took the samples using SRSWOR (ie are NOT doing iid sampling), while the std deviation of the bootstrap distribution is a dependable estimate. 
+- Permutation methods tend to only apply to a narrow range of problems. However, when they apply (eg in testing $H_0: F=G$), they give near exact results, even without parametric assumptions.
+
+
+Bootstrap test: testing a particular value of parameter
+
+$$
+\bar z - \bar y \\
+H_0: \theta = \theta_0 \\
+H_1: \theta \neq \theta_0
+$$
+
+
+
+## Examples {.tabset}
+
+### trunk flexion
+
+A researcher studied the flexibility of each of seven women, for of whom were in an aerobics class and three of whom were dancers. One measure she recorded was the trunk flexion - how far forward each of the women could while seated on the floor. The measures (in cm) are shown in the table below.
+
+Aerobics(n = 3): 38, 45, 58, 64, mean = 51.25
+Dance (m = 2): 48, 59, 61, mean = 56.00
+
+Do the data provide clear evidence that the flexibility is associated with being a dancer ? If being a dancer has no effect on flexibility, then one could argue that the seven data points in the study came from a common population: Some women have greater trunk flexion than others, but this has nothing to do with being a dancer. Another way of saying this is:
+
+Claim: The seven trunk flexion measures came from a single population; the labels aerobics and dance are arbitrary and have nothing to do with flexibility (as measure by trunk flexion).
+
+If the claim stated is true, then any rearrangement of the seven observations into two groups with four aerobics and three dance women is as likely as any other arrangement. Indeed, we could imagine writing the seven observations onto seven cards, shuffling the cards, and then drawing four of them to be the observations for the aerobics group, with other three being the observations for the dance group.
+
+There are 35 possible ways to divide the trunk flexion measures of the seven observations into 2 groups, of sizes 3 and 4.Listed below are ech of the 35 possibilities, along with the difference in sample means for each. The 2 samples obtained in the study are listed first, followed by the other 34 ways that the samples might have turned out.
+
+Let F be the dist of trunk flexion scores for aerobics; G for dancers.
+
+We do not assume any distribution; permutation test here is a nonparametric test.
+
+$$
+H_0: F = G \\
+H_1: F \neq G 
+$$
+
+We use a 2 sided alternative; they are different from each other. 
+
+Aside: p-value is the prob of obtaining a value of our test statistic that is as extreme or more extreme than the one computed from the sample data, under the null hypothesis ($H_0$ is true).
+
+Our test statistic is the difference between the means, $\bar z - \bar y$ ($51.25 - 56.00 = -4.75$).
+
+All the differences for all groupings must be equally likely under $H_0$ of having the same distribution.
+
+p-value: How many of the mean differences are at least as large as -4.75 (consider only the magnitude)?
+
+Here, it is 20/35
+
+```{r}
+
+all_obs <- c(38, 45, 58, 64,48, 59, 61)
+
+c3 <- combn(all_obs,3)
+
+
+actual_sample <- abs(mean(c(38, 45, 58, 64)) - mean(c(48, 59, 61)))
+
+extreme_count <- sum(abs(apply(c3, 2, function(x) mean(x) - mean(setdiff(all_obs, x))))>=actual_sample)
+
+p_value_estimate <- extreme_count / ncol(c3)
+
+p_value_estimate # if small (reject), assuming that the null hypothesis is true, it is very unlikely to obtain a value that is as large as 4.75 in magnitude is 20 out of 35
+```
+
+```{r}
+hist(apply(c3, 2, function(x) mean(x) - mean(setdiff(all_obs, x))), main = "Permutation distribution",  xlab = 'difference of means')
+```
+
+
+
+
+Suppose that the labels aerobics and dance are in fact arbitrary and have nothing to do with trunk flexion. Then each of the 35 outcomes listed above is equally likely. This means that the difference, shown in the last column of the table, are equally likely. Of the 35 differences, 20 of them are at least as large in magnitude as the -4.75 obtained in the study; these are shown in bold type in the table and filled in black or gray in the figure. Thus, if the claim is true (that the labels aerobic and dance are arbitrary), there is a 20/35 chance of obtaining a difference in sample mean as large, in magnitude, as the difference that was observed.
+
+The fraction 20/35 is approximately equal to `r p_value_estimate`, which is rather large. Thus, the observed data are consistent with the claim that the labels aerobics and dance are arbitrary and have nothing to do with flexibility. If the claim is true, we would expect to see a difference in sample means of 4.75 or more over half of the time, just due to chance alone. Therefore, this data provides little evidence that flexibility is associated with dancing.
+
+What we got is consistent with the null hypothesis so we fail to reject $H_0$.
+
+$$
+\text{p-value}: P(|\hat \theta| \geq |\hat \theta_{obs}|)
+$$
+
+If we know the sampling distribution of the test statistic under the null hypothesis, we get this from say a t-table. But here, we are not assuming any distribution, this is nonparametric. Here, we only have an estimated p-value. This is also known as randomization test.
+
+
+We also have resamples here. We take all possible combinations. We are doing this here WITH REPLACEMENT. 
+
+### example 2
+
+In an investigation
+
+```{r}
+
+all_obs <- c(42.3, 48.1, 50, 53.1, 50.7)
+
+c3 <- combn(all_obs,3)
+
+
+actual_sample <- abs(mean(c(42.3, 48.1, 50)) - mean(c(53.1, 50.7)))
+
+extreme_count <- sum(abs(apply(c3, 2, function(x) mean(x) - mean(setdiff(all_obs, x))))>=actual_sample)
+
+p_value_estimate <- extreme_count / ncol(c3)
+
+p_value_estimate # if small (reject), assuming that the null hypothesis is true, it is very unlikely to obtain a value that is as large as 4.75 in magnitude is 20 out of 35
+```
+
+
+
+

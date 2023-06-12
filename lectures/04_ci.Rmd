@@ -1,0 +1,297 @@
+---
+title: "BS Confidence intervals"
+author: "Shaine"
+date: "2023-05-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## BS Confidence intervals
+
+- alternative if you do not have a pivot or a pivotal quantity, esp in nonparametric cases
+
+## Review: Confidence intervals
+
+- Let $x_1, \dots, x_n$ is an rs from $\mathcal F(x;\theta)$
+  Suppose $\hat \theta \sim \mathcal N(\theta, V(\hat \theta))$ with $se(\hat \theta) = \sqrt{V(\hat \theta)}$
+- It follows that $\frac{\hat \theta - \theta}{se(\hat \theta)} \sim \mathcal N(0,1)$
+- Thus, a $(1-\alpha)100\%$ CI for $\theta$ is 
+
+  $$
+  -z_{1-\frac{\alpha}{2}}\leq \frac{\hat \theta - \theta}{se(\hat \theta)} \leq z_{1-\frac{\alpha}{2}}, \quad \text{using the symmetry property}
+  $$
+  
+  Here, the quantity in the middle $\frac{\hat \theta - \theta}{se(\hat \theta)} $ is called the pivot
+ 
+  - applying the algebra yields the endpoints of the CI
+  
+  $$
+  \hat \theta - z_{1-\frac{\alpha}{2}} se(\hat \theta) \leq \theta \leq  \hat \theta + z_{1-\frac{\alpha}{2}} se(\hat \theta)
+  $$
+  
+  - You can do one-sided CIs
+    - A $(1-\alpha)100\%$ upper one-sided CI for $\theta$
+
+$$
+\left(-\infty,\hat \theta + z_{1-\alpha} se(\hat \theta)\right)
+$$
+    - A $(1-\alpha)100\%$ lower one-sided CI for $\theta$
+
+$$
+\left(\hat \theta + z_{1-\alpha} se(\hat \theta), +\infty\right)
+$$  
+  
+
+- $z_{\alpha}$ meant $\alpha$ is my area to the left ($\alpha$-quantile)
+- in the above, we know that $\frac{\hat \theta - \theta}{se(\hat \theta)} \sim \mathcal N(0,1)$ and because of this, we know the pivot's quantiles $z_{1-\frac{\alpha}{2}}$
+- pivot: its expression or formula depends on the parameter but distribution does not depend on any unknown quantity - $\mathcal N(0,1)$ in this case - nothing unknown: easy to form CI since we know the quantiles. $se(\hat \theta)$ is also assumed to exist (there is a direct way to calculate, a formula exists - similar to sample mean). This is NOT always the case
+- In many cases,  $\frac{\hat \theta - \theta}{se(\hat \theta)} \overset \cdot\sim \mathcal N(0,1)$ (approximately distributed as)
+- Thus, a $(1-\alpha)100\%$ APPROXIMATE CI for $\theta$ is 
+
+  $$
+  \hat \theta - z_{1-\frac{\alpha}{2}} se(\hat \theta) \leq \theta \leq  \hat \theta + z_{1-\frac{\alpha}{2}} se(\hat \theta)
+  $$
+  
+  In the above CI, $se$ can be replaced by $\widehat {se}$ as long as it is standard normal approx. This has to be proven, too.
+  
+## Student's t
+  
+- Confidence interval based on student's t: If $x_1, \dots, x_n \overset {iid} \sim \mathcal N(\theta, \sigma^2)$, then if $\hat \theta = \bar X$
+  
+  $$
+  \frac{\hat \theta - \theta}{\widehat {se}(\hat \theta)} = \frac{\bar X - \theta}{\frac{s}{\sqrt n}} \sim t_{(n-1)}
+  $$
+  
+  Here, $\frac{s}{\sqrt n}$ is the estimator of the $se$. Also, if $\theta$ is our parameter of interest, then we have a valid pivot, $\frac{\bar X - \theta}{\frac{s}{\sqrt n}}$, because the expression depends on $\theta$ but the distribution does not depend on any unknown parameter ($t_{(n-1)}$), it only depends on the sample size ($n$) which we know. This is an exact distribution.
+  
+  Bound and do algebra
+  
+$$
+- t_{1-\frac{\alpha}{2}} \leq \frac{\bar X - \theta}{\frac{s}{\sqrt n}} \leq  t_{1-\frac{\alpha}{2}}
+$$
+A $(1-\alpha)100\%$ CI for $\theta$ (based on the t-dist) is
+
+  
+$$
+\bar X \pm t_{1-\frac{\alpha}{2}} \frac{s}{\sqrt{n}}
+$$
+
+## Unknown underlying distribution
+
+If the underlying distribution is unknown or $\hat \theta$ might be very complicated (not anymore the mean similar to above), approach above won't work.
+
+The t-dist approach won't work - 1. you might not have a normal dist 2. you might have a different parameter ($\theta$). $\theta$ could be the quantile and $\hat \theta$ could be the sample percentile, hence, $\frac{\hat \theta - \theta}{\widehat{se}(\hat \theta)}$ would no longer be student's t dist. Still using t quantiles, CI becomes inaccurate. Point is you cannot use the $t_{1 - \frac{\theta}{2}}$ quantiles - you can't use the t-table.
+
+### Bootstrap-t
+
+Now, $\theta$ can be any generic parameter with $\hat \theta$ as estimator. We can also use $\frac{\hat \theta - \theta}{\widehat{se}(\hat \theta)}$ and not assume it to be student's t. Hence, we cannot use the quantiles, $t_{frac{\alpha}{2}}$. This is when bootstrap-t becomes useful. Instead of student's t, we have this bootstrap t as alternative. This is a reference to the student's t distribution.
+
+
+Remarks:
+
+- the bootstrap-t allows us to obtain accurate intervals without having to make normal theory assumption. Since we do not know the quantiles in our approximate pivot, $q_{\frac{\alpha}{2}} \leq \frac{\hat \theta - \theta}{\widehat{se}(\hat \theta)} \leq q_{1-\frac{\alpha}{2}}$, we estimate them from the bootstrap. We cannot anymore look them up from the t-table.
+
+- it estimates the distribution (meant we can estimate the quantiles from there) of the pivot (quantity in the middle whose distribution does not depend on any unknown parameter) directly from the data.
+
+- assume, for now, that we have a formula for the standard error of a statistic, ${\widehat{se}(\hat \theta)}$ - we just don't know the distribution of $\frac{\hat \theta - \theta}{\widehat{se}(\hat \theta)}$
+
+- See bootstrap-t interval procedure in the handout
+- Data: Random sample $X_1 \cdots \X_n$
+- Bootstrap samples: $X_{1b}^* \cdots X_{nb}^*, \ b = 1, \cdots, B$
+- bootstrap principle: Sample is the new population and BS sample becomes the new sample
+
+  $$
+  \text{bootstrap principle} \\
+  t_b^* = \frac{\hat \theta^*_b - \hat \theta}{\widehat{se}\left(\hat \theta^*_b\right)}
+  \rightarrow
+  \frac{\hat \theta - \theta}{\widehat{se}\left(\hat \theta \right)} = t
+  $$
+- we are assuming that we know the formula for $\widehat{se}\left(\hat \theta \right)$ (else, we do another stage of bootstrap)
+- We do not know the distribution of $ \frac{\hat \theta - \theta}{\widehat{se}\left(\hat \theta \right)}$ so it is being estimated by the bootstrap. Hence, we use the principle above.
+- We are banking on the hope that the bootstrap distribution will be similar to the sampling distribution of the usual $t$.
+- we get $t_b^*$ for each bs sample and take the $\alpha/2$ quantile to get the estimated ones.
+- we bound $ \frac{\hat \theta - \theta}{\widehat{se}\left(\hat \theta \right)}$ with the estimates, $\hat t_{\frac{\alpha}{2}}$ and $\hat t_{1-\frac{\alpha}{2}}$, which are estimated and NOT coming from the table of t-values.
+
+  $$
+  \hat t_{\frac{\alpha}{2}} \leq \frac{\hat \theta - \theta}{\widehat{se}\left(\hat \theta \right)} \leq \hat t_{1-\frac{\alpha}{2}}
+  \\
+  \hat t_{\frac{\alpha}{2}} \widehat {se} \left(\hat \theta \right) \leq \hat \theta - \theta \leq \hat t_{1-\frac{\alpha}{2}} \widehat {se} \left(\hat \theta \right) 
+  \\
+  \text{bootrapt-t CI: }\hat \theta - \hat t_{1-\frac{\alpha}{2}} \widehat {se} \left(\hat \theta \right) \leq \theta \leq \hat \theta -\hat t_{\frac{\alpha}{2}} \widehat {se} \left(\hat \theta \right) 
+  $$
+  - Now, $\frac{\hat \theta - \theta}{\widehat{se}\left(\hat \theta \right)}$ can be considered a pivot since we now know the estimates of the quantile.
+  - $t^*_b, \ b = 1, \dots, B$ is not necessarily symmetric. Hence, $\hat t_{\frac{\alpha}{2}} \neq -\hat t_{\frac{\alpha}{2}}$, unlike the usual t-dist in which they are equal (dist is symm). Also, even if they could be symmetric, we are not certain that they are symmetric about 0.
+- See handout
+- 3rd bullet: $ -z_{1-\frac{\alpha}{2}} \leq \frac{\hat \theta - \theta}{\widehat{se}\left(\hat \theta \right)} \leq z_{1-\frac{\alpha}{2}}$ is inaccurate if $\hat \theta$ is not the sample mean or you have an underlying dist that is not normal. As $n$ increases, the performance of the bootstrap-t will be better than using approximate normal distribution or t-approximation.
+- location equivariant (sample mean, sample median, sample percentile): if $X_1, \dots X_n$ is a sample, then the statistic $T(X_1, \dots, X_n)$ is location equivariant if $T(X_1+c, X_2+c, \dots, X_n+c) = T(X_1, /dots, X_n) + c$
+- Bootstrap-t cannot be used for more general problems (e.g., setting CI for a correlation coeff but will work well after some transformations). Only limited use, usually only used with location equivariant statistics.
+
+### Bootstrap-t - unavailable SE formula
+- unavailable SE formula: $\widehat {se} \left(\hat \theta \right) $
+- involves taking second level, nested bs samples that will be used to estimate se.
+- It is enough to take 25 bs samples in this 2nd level, as to Tibshirani
+
+```{r echo = FALSE}
+#getwd()
+knitr::include_graphics("se_un.png")
+```
+
+### CI for $\rho$: Ordinary BS-t
+
+- Data: $(X_1, Y_1), (X_2, Y_2), \dots, (X_n, Y_n) \overset {iid} \sim$ 
+bivariate dist
+
+  $$
+  \rho = \frac{E(X-\mu_X)(Y-\mu_Y)}{\sigma_X\sigma_Y}
+  $$
+  
+- see handout for the usual bootstrap-t
+
+### Law school data
+
+Goal: Find CI for $\rho$ using ordinary bootstrap-t (algorithm 3)
+
+```{r}
+library(bootstrap) #Install R package bootstrap first
+data(law)
+
+LSAT <- law$LSAT; GPA <- law$GPA
+plot(GPA~LSAT,ylim=c(2.5,3.6),pch=19) 
+
+
+r <- cor(LSAT,GPA)
+print(r)
+B1 = 1000; B2 = 25 #1st and 2nd level bootstrap samples
+n = nrow(law) #sample size
+
+#FIND A CI FOR RHO
+set.seed(1000) # for reproducible results
+t.boot <- c(); r.boot <- c()
+for(b in 1:B1){ #taking 1st level boot
+  law.boot <- law[sample(c(1:n),n,T),] 
+  r.boot[b] <- cor(law.boot[,1],law.boot[,2])
+  
+  r.boot2 <- c()
+  for(bb in 1:B2){ #taking 2nd level boot
+    law.boot2 <- law.boot[sample(c(1:n),n,T),]
+    r.boot2[bb] <- cor(law.boot2[,1],law.boot2[,2])
+  }
+  se.boot <- sd(r.boot2) # estimate for the se
+  
+  t.boot[b] <- (r.boot[b]-r)/se.boot # bs-t
+}
+r
+se.r <- sd(r.boot) #bootstrap estimate of the SE
+se.r
+lower <- r - quantile(t.boot,.95)*se.r # 90% CI
+upper <- r - quantile(t.boot,.05)*se.r # 90% CI
+c(lower,upper)
+# We are 90% confident that true coefficient of correlation is between 0.068 and 0.961. CI is too wide, 0 to 1 range. Think of other approach to get a narrower CI. Ex: do transformation
+```
+
+### Transformations and the BS-t
+
+- BS-t may perform erratically in small-sample nonparametric settings BUT this can be alleviated through proper transformation
+- in the above example, $n=15$ may be too small resulting in a wide CI
+- Why we need to transform: Asymptotic distribution of $r$
+
+  $$
+  \sqrt N (r-\rho) \overset {d} \rightarrow \mathcal N(0, (1-\rho^2)^2)
+  $$
+  
+- problem: $\sqrt N (r-\rho)$ still depends on $\rho$ and in the result, the variance, $(1-\rho^2)^2$ also depends on the unknown parameter. Our parameter of interest is $\rho$. We can't rely on the asymptotics because it still depends on the unknown parameter. 
+
+- solution: is there a way that we can transform $r$ so that the asymptotic distribution becomes
+
+  $$
+  \sqrt N (g(r)-g(\rho)) \overset {d} \rightarrow \mathcal N(0, \text {free of }\rho)
+  $$
+  
+- An available transformation is the fisher transformation (same as inverse hyperbolic tangent formula), $g(r) = \frac{1}{2}\ln\left(\frac{1+r}{1-r}\right) = \tanh^{-1}(r)$. Now, the variance no longer depends on $\rho$, the unknown parameter. This is known as the variance stabilizing transformation. 
+
+  $$
+  \sqrt N \left(\frac{1}{2}\ln\left(\frac{1+r}{1-r}\right)-\frac{1}{2}\ln\left(\frac{1+\rho}{1-\rho}\right)\right) \overset {d} \rightarrow \mathcal N(0,1)
+  $$
+  
+- apply bs-t after applying the above transformation. Think of $\phi = \frac{1}{2}\ln\frac{1+\rho}{1-\rho}$ as our parameter, calculate the endpoints and back-transform them.
+
+- Scheme:
+  1. $\rho \rightarrow \phi = \frac{1}{2}\ln\frac{1+\rho}{1-\rho}$
+  2. $r \rightarrow \hat \phi$
+  3. CI for $\phi$
+  4. Suppose CI for $\phi$ is (L, U) using bootstrap-t
+  5. CI for $\rho$: $\rho \rightarrow \left(\frac{e^{2L}-1}{e^{2L}+1}, \frac{e^{2U}-1}{e^{2U}+1}\right)$
+  
+- See algorithm 4: #3 is the CI for $\phi$ (intermediate CI); #4 is the CI for $\rho$
+
+
+```{r}
+library(bootstrap) #Install R package bootstrap first
+data(law)
+
+LSAT <- law$LSAT; GPA <- law$GPA
+plot(GPA~LSAT,ylim=c(2.5,3.6),pch=19) 
+
+
+r <- cor(LSAT,GPA)
+print(r)
+B1 = 1000; B2 = 25 
+n = nrow(law)
+set.seed(1000)
+
+phi <- .5*log((1+r)/(1-r)) #Fisher's transformation
+
+t.boot <- c(); phi.boot <- c() # start of bootstrap-t
+for(b in 1:B1){
+  law.boot <- law[sample(c(1:n),n,T),]
+  r.boot <- cor(law.boot[,1],law.boot[,2])
+  phi.boot[b] <- .5*log((1+r.boot)/(1-r.boot)) #Fisher's transformation
+  phi.boot2 <- c()
+  for(bb in 1:B2){ # purpose: get standard error since no formula
+    law.boot2 <- law.boot[sample(c(1:n),n,T),]
+    r.boot2 <- cor(law.boot2[,1],law.boot2[,2])
+    phi.boot2[bb] <- .5*log((1+r.boot2)/(1-r.boot2))
+  }
+  se.boot <- sd(phi.boot2)
+  
+  t.boot[b] <- (phi.boot[b]-phi)/se.boot # estimate quantile of the approximate pivot
+}
+
+se.phi <- sd(phi.boot) # estimator standard errror of phi hat
+lower.phi <- phi - quantile(t.boot,.95)*se.phi
+upper.phi <- phi - quantile(t.boot,.05)*se.phi
+c(lower.phi,upper.phi) #CI for phi
+
+# back-transform lower and upper CI for phi
+lower.rho <- (exp(2*lower)-1)/(exp(2*lower)+1)
+upper.rho <- (exp(2*upper)-1)/(exp(2*upper)+1)
+c(lower.rho,upper.rho)  #90% Confidence interval for rho
+
+#We are 90% confident that the true correlation is between 0.166 and 0.931. Still wide but shorter that the approach w/o transformation
+
+```
+
+
+
+Remarks:
+
+- not transformation respecting (different results when using CI for $\phi$ and that from $/rho$); scale matters. There are others that are transformation respecting.
+- It is difficult to find variance-stabilizing transformations. We can estimate the appropriate transformation by using bootstrap again.
+
+### Bootstrap to estimate the transformation
+
+- see algorithm 5 in the handout
+- $X \rightarrow$ nonconstant variance
+- $g(X) \rightarrow$ constant variance
+- numerical integration to find $g(x)$: we now have the needed transformation > apply transformation to parameter > bootstrap-t on the transformed parameter > back-transform
+- make a good judgement call of what the equation for the function plotted is.
+
+```{r echo = FALSE}
+#getwd()
+knitr::include_graphics("num_in.png")
+```
+
+

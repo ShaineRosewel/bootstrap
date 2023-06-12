@@ -1,0 +1,30 @@
+---
+title: "May5"
+author: "Shaine"
+date: "2023-05-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Recall
+
+Bootstrap percentile CI where, $\theta^*_1, \dots, \theta^*_B \rightarrow (1-\alpha)100\%$ bootstrap percentile CI for $\theta$ is $\left( \hat \theta^*_\frac{\theta}{2}, \hat \theta^*_{1 -\frac{\theta}{2}} \right)$ (quantiles of bs statistics)
+
+This works best if $\hat \theta$ is an unbiased estimator of $\theta$. It is problematic when the bias is large. We want $\hat \theta$ to be an unbiased estimator of $\theta$ since the bs distribution is centered around $\hat \theta$ (statistic computed from our sample). The reason it is centered around $\hat \theta$ is that these are just resamples (taken from the sample).
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
