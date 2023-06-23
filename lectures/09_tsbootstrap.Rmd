@@ -314,15 +314,15 @@ The discussion on choosing the p initial values is the same as in bootstrapping 
 ### R example
 
 ```{r}
+getwd()
 library(tseries)
-setwd("C:/Users/mcluc/Desktop/PENDING/STAT 252/4_DATASETS")
-mau <- read.table("mauna.dat",header=T,sep='')
+mau <- read.table("datasets/mauna.dat", header = FALSE, sep = "")
 mau <- ts(mau,start=1958,frequency=12) # frequency=12 means lag 1 in PACF means you have 1 seasons (contains 12 time points)
-plot(mau)
+# plot(mau)
 ```
 
 ```{r}
-#Transforming the mau series, lag 12 - seasonal differencing, log for constant variance
+# #Transforming the mau series, lag 12 - seasonal differencing, log for constant variance
 mau.gr <- 1000*diff(log(mau),lag=12) # can be interpreted as growth rate
 plot(mau.gr) # seems may trend pa but passed the next test
 ```
@@ -349,11 +349,166 @@ rho.hat <- acf(mau.gr,lag = 12,type='correlation',plot=F)$acf[,,1]
 
 mau.acf12 <- rho.hat[13]
 p.order <- 12
+
+# fit the AR(12) model using YW to estimate phi's
 phi.ar <- solve(toeplitz(rho.hat[1:p.order])) %*% rho.hat[2:(p.order+1)] #YW Walker estimator to phi; R^(-I)r
 ```
 
+Let
 
-## Sieve Bootstraps
+$$
+x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots +  \phi_{12} x_{t-12} +\epsilon_t, \quad AR(12)\\
+$$
+
+1. Compute the residuals
+
+```{r}
+p <- 12
+et <- c()
+n <- 371
+for (t in (p+1):n) {
+  f <- mau.gr[t] - phi.ar[,1]%*%mau.gr[(t-1):(t-p)]
+  et[t-p] <- f
+}
+
+plot(et, type = 'l')
+```
+
+2. Center the residuals using $e' = e_t - \bar e$
+
+```{r}
+centered_e <- et-mean(et)
+
+hist(centered_e)
+```
+
+
+3. Initialize recursion.
+
+$$
+x_0 = \phi_1 x_{-1} + \phi_2 x_{-2} + \dots +  \phi_{12} x_{-12} +\epsilon_t, \quad AR(12)\\
+$$
+
+$$
+x_{-m+1} = \phi_1 x_{-m} + \phi_2 x_{-m-1} + \dots +  \phi_{12} x_{-m-11} +\epsilon_{-m+1}, \quad AR(12)\\
+$$
+
+$$
+x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots +  \phi_{12} x_{t-12} +\epsilon_t, \quad AR(12)\\
+$$
+
+```{r}
+getwd()
+```
+
+```{r}
+# p <- 12
+# et <- c()
+# n <- 371
+# 
+# # burn in-----------------------------------------------------------------------
+# t <- 1
+# m <- 100
+
+set.seed(7)
+initial_values <- sample.int(100, p, replace = TRUE)
+
+for (m in 10000:1) {
+  epsilon <- sample(centered_e, 1)
+  initial_values <- c(initial_values[1:p]%*%phi.ar[,1] + epsilon,initial_values)
+}
+
+plot(rev(initial_values), type = 'l')
+
+#set.seed(7)
+
+
+
+
+
+```
+
+
+```{r}
+
+M <- 10000
+phi_12 <- c()
+initial_values <- initial_values[1:12]
+print(initial_values)
+
+
+# library(doParallel)  # will load parallel, foreach, and iterators
+# cl <- makeCluster(detectCores()-2)
+# registerDoParallel(cl)
+# 
+# startTime <- Sys.time()
+# #phi_12 <- numeric(10)  # Initialize an empty vector to store phi_12 values
+# OUT <- foreach(b = 1:M,.combine='c') %dopar% {
+#   epsilon <- sample(centered_e, size = n, replace = TRUE)
+#   
+#   for (nn in 1:n) {
+#     initial_values <- c(
+#       initial_values[1:p]%*%phi.ar[,1] + epsilon[nn],
+#       initial_values)
+#   }
+#   
+#   # reverse so that the oldest data point is found at the start of the sequence
+#   datt <- rev(initial_values[1:n])
+#   
+#   rho.hat <- acf(datt,lag = 12,type='correlation',plot=F)$acf[,,1]
+#   
+#   # fit the AR(12) model using YW to estimate phi's
+#   # est_phi <- solve(toeplitz(rho.hat[1:p])) %*% rho.hat[2:(p+1)]
+#   
+#   #est_phi[13]
+#   rho.hat[13]
+# }
+# endTime <- Sys.time()
+# stopCluster(cl)
+# 
+# print(endTime - startTime)
+
+
+```
+
+
+```{r}
+load(file = '/home/scientists/sci01/Projects/bootstrap/lectures/datasets/cor13.Rdata')
+mau.acf12
+low <- 2*mau.acf12-quantile(OUT, 0.975)
+high <- 2*mau.acf12-quantile(OUT, 0.025)
+c(low, high)
+```
+
+
+```{r}
+hist(OUT)
+```
+
+
+
+
+```{r}
+# M <- 100
+# ss <- c()
+# for (b in 1:M) {
+#   print(sample(centered_e, replace = TRUE))
+# }
+
+hey <- function(i){
+  
+}
+
+sapply(1:1, hey)
+
+
+```
+
+
+
+
+
+## Sieve Bootstrap
 
 Suppose that a model $\Pi$ is available to describe underlying probabilistic structure, but involving infinitely many parameters
 
@@ -419,3 +574,4 @@ Let $\{x_1, \dots x_n\}$ be data, suppose we have an AR(12) model
 $$
 \hat P(\hat \rho(12) - \rho(12) \leq x) = \frac{\#\left\{  \hat \rho_j^*(12) - \hat \rho(12) \leq x\right\}}{M}
 $$
+

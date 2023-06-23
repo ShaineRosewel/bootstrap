@@ -1,0 +1,277 @@
+---
+title: "10_tsbootstrap"
+output: html_document
+date: "2023-06-16"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Blocking schemes {.tabset}
+
+### Buffered blocking scheme
+
+- divides the sample ito disjoint blocks that are separated by smaller blocks which serve to render the larger blocks of RVs independent. 
+- $B_1, B_2, \dots$: blocks of interest  
+- $L_1, L_2, \dots$: buffers; there are l elements in buffer L
+- if the series is m-dependent, then the blocks are independent if $\mathcal l$, then the blocks are independent if $\mathcal l > m$
+- n/(b+1) blocks
+
+_____________________________
+
+### Adjacent, non-overlapping blocking scheme
+
+- same as buffered blocking scheme where $\mathcal l = 0$
+- n/b blocks
+
+_____________________________
+
+### Overlapping blocking scheme
+- n-b+1 blocks
+
+_____________________________
+
+
+### Remarks:
+
+1. To establish the validity of subsampling, any of the 3 methods can be used.  
+2. Typically, using one of nonoverlapping schema (ie. buffered, adjacent) makes the arguments intuitively simple since dependence between $B_j$ and $B_{j+1}$ is small (or zero). - Note that in bootstrap sampling, we do iid sampling.  
+3. However, the fully overlapping scheme is more efficient despite dependence of the blocks.
+4. Essential requirement: if b is the block size
+   - as $n \rightarrow \infty, \ b \rightarrow \infty$  
+   - as $n \rightarrow \infty, \ \frac{b}{n} \rightarrow \infty$
+   - Example: $b = n^{\frac{1}{3}}; \ b = n^{\frac{1}{2}}\log n$
+   
+_____________________________
+
+   
+## Subsampling methodology
+
+Goal: Estimate $J_n(x)$, the CDF of $\tau_n(\hat \theta_n - \theta)$
+
+Let $\hat \theta_n = g_n(x_i, \dots, x_n)$ (estimator of $\theta$ based on the entire sample)
+Let $\hat \theta_{b,i} = g_b(B_i) =$ estimator computed from the subspan $B_i$ that includes b observations
+Let
+
+$$
+z_{b,i}=\tau_n(\hat \theta_n - \theta), \quad \text{unknown function of } \theta \\
+\hat z_{b,i} = \tau_n(\hat \theta_n - \hat \theta_n)
+$$
+
+Our estimate of $J_n(x)$ is
+
+$$
+L_{n,b} = \frac{1}{Q} \sum^Q _{i=1} I(\hat z_{b,i} \leq x), \text{empirical CDF, Q is the # of blocks}
+$$
+
+We can use this empirical CDF to calculate the ff:
+
+$$
+L_{n,b}(x) = 0.975 \\
+L_{n,b}(x) = 0.025
+$$
+
+A 95% CI for $\theta$ is obtained as 
+
+$$
+\left(
+\hat \theta_n - \frac{L^{-1}_{n,b}(0.975)}{\tau_n},
+\hat \theta_n - \frac{L^{-1}_{n,b}(0.025)}{\tau_n}\right)
+$$
+$L^{-1}_{n,b}(0.975)$ is the $0.975^{th}$ quartile
+
+Not range respecting so we just drop ($\theta > 0$).
+
+Subsampling is not a bootstrap methodology. Kind of similar, not SRSWR or parametric bs. Sieve, AR sieve, and block are all bs. Subsampling is not, but they have similarities. Subsampling is used for estimation of parameter.
+
+## Block bootstrap
+
+- similar to subsampling in that we take subspans of time series and patch them together.  
+- unlike sieve or model-based method, since these two methods involve fitting a model  
+- Let $X_1, \dots, X_n$ be our TS data. We append k randomly drawn blocks of size b together to produce a stretch $X_1, \dots, X_m$, where m = kb (not the same as n, if $\frac{n}{b}$ is not an integer)  
+- if $n\approx m$ then the block bs is generating a TS of length (almost) n on which the statistic of interest can be recalculated
+
+
+------- INSERT DRAWING
+
+Remarks:
+- We can use any of the 3 blocking schemes (buffered, adjacent, overlapping) to define the blocks  
+- the overlapping scheme has been shown to make more efficient use of the information in the data at hand, so we will use this method.
+
+------- INSERT DRAWING
+
+- There are $Q = n-b+1$ blocks $B_1, B_2, \dots, B_Q$ and $k= \#$ of blocks drawn  
+- Let $k = \frac{n}{b}$ (if $k$ not in $\mathcal Z^+$ let k be the ceiling of $\frac{n}{b}$). ex: 1.2, 2; -3.1, -3; 4, 4  
+- The block bs proceeds with drawing k blocks randomly with replacement from $B_1, \dots, B_Q$ and concatenating the k blocks into a bs pseudoseries of length n
+
+------- INSERT DRAWING
+
+- Note $\left\{ B_1^*\dots B_K^*\right\}$ is a SRSWR $\left\{ B_1^*\dots B_Q^*\right\}$  
+- We repeat the procedure  M times generating a pseudoseries $\left\{ X_1^{*(j)}\dots X_m^{*(j)}\right\}, \quad j = 1,2 \dots, M$
+
+Block bs algorithm:
+
+1. For $j = 1, 2, \dots, M$ draw $\left\{ B_1^{*(j)}\dots B_k^{*(j)}\right\}$ randomly WR from the set of available blocks $\left\{ B_1^*\dots B_Q^*\right\}, \quad k = \frac{n}{b}$ - see guide for selecting b abive  
+
+2. Concatenate (or paste) the bs blocks $\left\{ B_1^{*(j)}\dots B_k^{*(j)}\right\}$ in order to construct the jth bs pseudoseries $\left\{ X_1^{*(j)}\dots X_m^{*(j)}\right\}$  
+
+3. Let $\hat \theta_m^{*(j)}$ be the statistic computed from $\left\{ X_1^{*(j)}\dots X_m^{*(j)}\right\}$  
+
+4. $\hat J_n(x) = \hat P \left( \sqrt n (\hat \theta - \theta) \leq x\right) = \frac{\#\left\{\sqrt n (\hat \theta^{*(j)}_m-\hat  \theta_n) \leq x\right\}}{M}$
+
+Remarks:
+
+1. We can obtain a 95% CI for $\theta$ using the percentile-based BS CI's  
+2. 
+
+$$
+
+$$
+
+3. b? as $n \rightarrow \infty$, $n=b \rightarrow \infty$; as $n \rightarrow \infty$, $\frac{b}{n} \rightarrow 0$  
+4. model-free (nonparametric) method  
+5. The construction of pseudoseries from (*) tends to weight the contributions  of beginning observations and last observations less highly, generating bias.
+
+## Circular block bootstrap
+
+- is this a reasonable approach? Yes, because
+
+## Examples {.tabset}
+
+### Autocovariance of non-defense capitalization
+
+```{r}
+ndc <- read.table("lectures/datasets/Nondefcap.dat")
+plot(ndc[,'V2'], type='l')
+```
+
+After differencing, we wish to estimate $\gamma(1)$ and compute the cdf $P[\hat \gamma(1)-\gamma(1) \leq x]$
+
+```{r}
+ndc <- ts(ndc[,2], start=c(1992,3), frequency=12, names = 'NewOrders')
+
+# differencing to remove trend
+ndc.diff <- diff(ndc)
+plot(ndc.diff)
+```
+
+
+```{r}
+n <- length(ndc.diff) # n is 292
+gamma.hat <- acf(ndc.diff, lag = n-1, type = "covariance")$acf[,,1] 
+
+ndc.acf1 <- gamma.hat[2]
+```
+
+The lag 1 autocovariance in estimated to be `r ndc.acf1``
+
+Let us use the subsampling methodology, with $\tau_n = \sqrt n$
+
+```{r}
+b.sub <- 5
+q.sub <- floor(n-b.sub+1)
+#q.sub
+sub.edf <- NULL
+
+for(i in 1:q.sub)
+{
+  sub.ndc <- ndc.diff[i:(i+b.sub-1)]
+  gamma.sub <- acf(sub.ndc, lag = b.sub-1, type = "covariance", plot = FALSE)$acf[,,1]
+  sub.edf <- c(sub.edf, sqrt(b.sub)*(gamma.sub[2]-ndc.acf1))
+}
+
+sub.edf <- sort(sub.edf)
+interval <- c(sub.edf[floor(.025*q.sub)], sub.edf[floor(.975*q.sub)])
+interval
+```
+
+
+
+
+
+```{r}
+ndc.acf1 - ((interval)/sqrt(n))
+```
+
+
+
+
+
+```{r}
+plot(sub.edf, seq(1, q.sub)/q.sub, type = "l", xlab = 'x', ylab = '', lwd = 2)
+```
+
+### Block BS for the Mauna Loa Mean
+
+Consider annual differences of the logged Mauna Loa CO2 time series. We want to estimate the mean using block bs, so we apply the above method to obtain the cdf of the centered statistic
+
+```{r}
+mau <- read.table("lectures/datasets/mauna.dat", header = FALSE, sep = "")
+head(mau)
+```
+
+```{r}
+mau <- ts(mau, start = 1958, frequency = 12)
+plot(mau)
+```
+
+```{r}
+mau.gr <- 1000*diff(log(mau), lag = 12)
+n <- length(mau.gr)
+plot(mau.gr)
+```
+
+```{r}
+mau.mean <- mean(mau.gr)
+mau.mean
+```
+
+The sample mean (after rescaling (differencing)) is `r mau.mean`
+
+First, try $b = \sqrt n$ and $M = 10^5$
+
+We can also try $b = n^{\frac{1}{3}}$ by rerunning the code chunk
+
+```{r}
+b <- ceiling(sqrt(n))
+#b <- ceiling(n^(1/3))
+#b <- ceiling(n^(2/3))
+
+k <- ceiling(n/b) # 19
+Q.big <- n - b + 1 # 352
+monte.roots <- NULL
+
+Monte <- 10000
+for (i in 1:Monte)
+{
+  monte.sample <- NULL
+  for (j in 1:k)
+  {
+    boot.index <- sample(Q.big, size = 1)
+    monte.sample <- c(monte.sample, mau.gr[seq(boot.index, boot.index+b-1)])
+  }
+  monte.sample <- monte.sample[1:n]
+  monte.root <- mean(monte.sample) - mau.mean
+  monte.roots <- c(monte.roots, monte.root)
+}
+
+hist(monte.roots)
+```
+
+```{r}
+interval <- c(sort(monte.roots)[floor(.025*Monte)], sort(monte.roots)[floor(.975*Monte)])
+```
+
+```{r}
+# CI
+mau.mean + interval
+```
+
+```{r}
+plot(sort(monte.roots), seq(1, Monte)/Monte, type = "l", xlab = "x", ylab = "", lwd = 2)
+```
+
+### Sieve bs
+
