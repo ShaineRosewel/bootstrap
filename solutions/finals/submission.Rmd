@@ -1,0 +1,67 @@
+---
+number_sections: true
+fig_caption: yes
+output:
+  bookdown::pdf_document2:
+    toc: false
+  citation_package: natbib
+fontsize: 12pt 
+header-includes:
+- \usepackage{amsmath}
+- \numberwithin{equation}{section}
+- \usepackage{setspace}\singlespacing
+- \usepackage{pdflscape}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+- \usepackage{indentfirst}
+- \usepackage{titling}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[RO,RE]{Matala}
+- \fancyhead[LO,LE]{Finals}
+- \fancyfoot[LO,LE]{`r format(Sys.time(), 'Last rendered on %Y %B %d %X')`}
+- \fancyfoot[CO,CE]{}
+- \fancyfoot[RE,RO]{\thepage}
+- \fancypagestyle{plain}{\pagestyle{fancy}}
+geometry: margin=2cm
+papersize: a4
+bibliography: /home/scientists/sci01/Projects/bootstrap/common/ref.bib
+biblio-style: apalike
+csl: /home/scientists/sci01/Projects/bootstrap/common/harvard-educational-review.csl
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+  echo = FALSE, 
+  comment = NA, 
+  message = FALSE, 
+  warning = FALSE,
+  fig.align = 'center',
+  fig.height = 4,
+  fig.width = 5)
+options(scipen = 1, digits = 7)
+```
+
+# Breast cancer
+
+Patients with advanced terminal cancer of the breast were treated with ascorbate in an attempt to prolong survival. The table below shows survival times (days).
+
+```{r, child = "child/item_01.Rmd"}
+
+```
+
+# Blood flow 
+
+Does drinking coffee affect blood flow, particularly during exercise? Doctors studying healthy subjects measured myocardial blood flow (MBF) during bicycle exercise before and after giving the subjects a dose of caffeine that was equivalent to drinking two cups of coffee. The table below shows the MBF levels before (baseline) and after (caffeine) the subjects took a tablet containing 200 mg of caffeine. Note that the observations are paired. We would like to test whether or not the mean MBF is the same at baseline as it is after taking caffeine. However, we cannot guarantee normality of the observations, and therefore the paired t-test cannot be used.
+
+```{r, child = "child/item_02.Rmd"}
+
+```
+
+# Earthquake
+
+The National Earthquake Information Center has provided annual data on the number of earthquakes per year exceeding magnitude 7.0 for the years from 1900 to 1998. Take the first difference of the data so that the number for each year represents the change since the previous year. Note that the resulting differenced series can be interpreted as annual change.
+
+```{r, child = "child/item_03.Rmd"}
+
+```

@@ -1,0 +1,120 @@
+
+```{r}
+R02_01 <- "../R/02_01_bstest.R"
+source(R02_01)
+```
+
+```{r results = 'asis'}
+X <- data.frame("Subject" = 1:8, 
+"Baseline" = caffeine_data$baseline, 
+"Caffeine" = caffeine_data$caffeine)
+
+row.names(X) <- NULL
+
+stargazer::stargazer(X, type='latex',
+                     header=FALSE,
+          title="MBF (ml/min/g) for eight subjects",
+          label = "tab:original",
+          summary = FALSE,
+          rownames = FALSE)
+```
+
+
+
+## Bootstrap test
+
+For this kind of data, explain how you would perform a bootstrap hypothesis test to check if there is a difference in mean MBF.
+
+Some notes:
+
+- Since this is a test not on the distribution, but on the value of the parameter, the bootstrap test will be used.  
+- Since the observations are paired or matched, samples will be taken pairwise.  
+- Test the hypothesis that the population's average difference in MBF levels during exercise after taking nothing - baseline($X$), and taking 200 mg caffeine($Y$) is equal to zero.
+
+\begin{equation}
+\begin{aligned}
+H_0: D = \sum_{i=1}^N\left(x_i-y_i\right) = 0 \\
+H_1: D = \sum_{i=1}^N\left(x_i-y_i\right) \neq 0
+\end{aligned}
+\end{equation}
+
+To administer the bootstrap hypothesis test,
+
+1. Transform the data so that it follows the null hypothesis. 
+
+   Given $X$ and $Y$, the differences of pairs are given by
+   
+   \begin{equation}
+   \begin{aligned}
+   d_i = x_i - y_i; \quad i = 1,\dots, n
+   \end{aligned}
+   \end{equation}
+   
+   The following transformation is applied so that the null hypothesis applies to the sample.
+   
+   \begin{equation}
+   \begin{aligned}  
+   \tilde {d_i} = d_i - \bar d;  \quad \bar d = \frac{\sum_{i=1}^nd_i}{n}
+   \end{aligned}
+   \end{equation}
+   
+   Below is the proof that this transformation is guaranteed to result in 0.
+   
+   \begin{equation}
+   \begin{aligned}
+   \frac{1}{n}\sum_{i=1}^n \tilde {d_i} 
+   = \frac{1}{n}\sum_{i=1}^n \left(d_i - \bar d \right) 
+   = \frac{1}{n}\sum_{i=1}^n d_i - \frac{1}{n}\sum_{i=1}^n \bar d
+   = \frac{1}{n}\sum_{i=1}^n d_i - \frac{1}{n}n\bar d 
+   = \bar d - \bar d 
+   = 0
+   \end{aligned}
+   \end{equation}
+
+2. Calculate the test statistic for the observed data: t-statistic for paired or matched samples
+
+   \begin{equation}
+   \begin{aligned}
+   t_{obs} = \frac{\bar {\tilde d}}{\frac{s}{\sqrt n}}; \quad s = \sqrt{\frac{\sum_{i=1}^n \left(\tilde d - \bar{\tilde d}\right)^2}{n-1}}
+   \end{aligned}
+   \end{equation}
+
+
+3. Take B bootstrap samples by sampling pairs (or matched differences), with replacement, of size n from the transformed data. Let $b = 1, \dots, B$
+
+   \begin{equation}
+   \begin{aligned}
+   B_1^* = \{\tilde d_{11}^*, \dots, \tilde d_{1n}^*\} \overset {SRSWR}\sim \{\tilde d_1, \dots, \tilde d_n\} \\
+   B_2^* = \{\tilde d_{21}^*, \dots, \tilde d_{2n}^*\} \overset {SRSWR}\sim \{\tilde d_1, \dots, \tilde d_n\} \\
+   \vdots \\
+   B_B^* = \{\tilde d_{B1}^*, \dots, \tilde d_{Bn}^*\} \overset {SRSWR}\sim \{\tilde d_1, \dots, \tilde d_n\} \\
+   \end{aligned}
+   \end{equation}
+
+4. Compute the test statistic for each bootstrap sample. This gives $B$ values.
+
+   \begin{equation}
+   \begin{aligned}
+   t_b^* = \frac{\bar {\tilde d^*}}{\frac{s^*}{\sqrt n}}; \quad s^* = \sqrt{\frac{\sum_{i=1}^n \left(\tilde d^* - \bar{\tilde d^*}\right)^2}{n-1}}
+   \end{aligned}
+   \end{equation}
+   
+5. Estimate the p-value. If it is less than the significance level ($\alpha$), $0.05$, reject the null hypothesis.
+
+   \begin{equation}
+   \begin{aligned}
+   P(|t^*| \geq |t_{obs}|) = \frac{ \# \{ |t^*| \geq |t_{obs}| \}}{B}
+   \end{aligned}
+   \end{equation}
+
+## Implementation
+
+Perform the bootstrap hypothesis test at $\alpha =0.05$. 
+
+With the estimated p-value of `r sum(indicator)/B > 0.05`, there is not enough evidence to say that there is a difference in the average MBR levels when taking 200 mg caffeine and not, during exercise.
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R02_01, paste(rep("-", 43), collapse = "")))
+cat(paste(readLines(R02_01), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```

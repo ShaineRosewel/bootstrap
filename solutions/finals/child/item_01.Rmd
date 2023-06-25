@@ -1,0 +1,65 @@
+```{r micro,results = "hide"}
+R01_01 <- "../R/01_01_bst.R"
+source(R01_01)
+```
+
+```{r results = 'asis'}
+stargazer::stargazer(t(data.frame(data)), 
+          header=FALSE, type='latex',
+          title="Survival Times (Days) for Patients with Breast Cancer",
+          label = "tab:original",
+          rownames = FALSE)
+```
+
+## Bootstrap-t
+
+Use the bootstrap-$t$ method to construct $95 \%$ CI for the mean survival time. *When doing the bootstrap, work with the data on the natural log scale and then exponentiate the resulting interval boundaries.* Interpret the resulting interval.
+
+We are 95% confident that the true value of mean survival time is between `r exp(lower)` and `r exp(upper)`.
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_01, paste(rep("-", 43), collapse = "")))
+cat(paste(readLines(R01_01), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
+
+## BCa
+
+Use the $BCa$ method to construct a $95 \%$ CI for the mean survival time.
+
+
+```{r}
+R01_02 <- "../R/01_02_bca.R"
+source(R01_02)
+```
+
+We are 95% confident that the true value of mean survival time is between `r exp(theta_BCa)[1]` and `r exp(theta_BCa)[2]`.
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_02, paste(rep("-", 45), collapse = "")))
+cat(paste(readLines(R01_02), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
+## Comparison
+
+Compare your intervals.
+
+
+Both intervals (shown below - NOT yet exponentiated) for $BSt$ and $BCa$ contain the sample mean survival time, `r sample_mean`. It is a bit wider for $BSt$ (upper - lower: `r upper-lower`) than $BCa$ (upper - lower: `r theta_BCa[2]-theta_BCa[1]`). Upon exponentiation, the difference between the two CI's became larger. $BSt$ (upper - lower: `r exp(upper)-exp(lower)`) is hugely wider than that of $BCa$ (upper - lower: `r exp(theta_BCa[2])-exp(theta_BCa[1])`). 
+
+Both of these CI's are second order accurate but $BCa$ is range preserving and transformation respecting, unlike $BSt$
+
+```{r}
+R01_03 <- "../R/01_03_compare.R"
+source(R01_03)
+```
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R01_03, paste(rep("-", 45), collapse = "")))
+cat(paste(readLines(R01_03), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
+

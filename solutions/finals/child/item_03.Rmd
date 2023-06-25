@@ -1,0 +1,46 @@
+## Lag-1 autocorrelation
+
+```{r}
+R03_01 <- "../R/03_01_acf1.R"
+source(R03_01)
+```
+
+Estimate the lag-1 autocorrelation of the annual change. In estimating the lag-1 autocorrelation, use the following formula:
+
+\begin{equation}
+\begin{aligned}
+\hat \rho_1 = r_1 = \frac{\sum^n_{t-2} (X_t - \bar X)(X_{t-1}-\bar X)}{\sum^n_{t-1}(X_t - \bar X)^2}
+\end{aligned}
+\end{equation}
+
+
+Estimate the lag-1 autocorrelation of the annual change: `r get_acf1(earthquake)`
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R03_01, paste(rep("-", 45), collapse = "")))
+cat(paste(readLines(R03_01), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 73), collapse = "")))
+```
+
+Note: Estimated autocorrelation has the same output as `acf(annual_change, lag = 1, type = "correlation", plot = FALSE)$acf[,,1][2]`
+
+## Block bootstrap
+
+Using the block bootstrap (no need to do a circular block bootstrap) with block size b = 9, k = n/b blocks, and M = 10, 000 bootstrap samples, estimate the standard error of the lag-1 autocorrelation. Use the adjacent, nonoverlapping blocking scheme in forming the blocks.
+
+```{r}
+R03_02 <- "../R/03_02_blockbs.R"
+source(R03_02)
+```
+
+Estimated standard error of the lag-1 autocorrelation: `r sd(acf1_star)`
+
+
+```{r}
+cat(paste0("  CODE FILENAME: ", R03_02, paste(rep("-", 43), collapse = "")))
+cat(paste(readLines(R03_02), collapse="\n"),collapse = "\n")
+cat(paste0("  ", "end",paste(rep("-", 71), collapse = "")))
+```
+
+Note: `sd` has the same output as 
+`sqrt((sum((acf1_star - mean(acf1_star))^2))/(M-1))`
